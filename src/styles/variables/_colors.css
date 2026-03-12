@@ -1,28 +1,28 @@
 :where(:root) {
-  --gray-0: #fff;
-  --gray-1: #eaeaea;
+  --gray-0: #fafafa;
+  --gray-1: #f0f0f0;
   --gray-2: #d4d4d4;
-  --gray-3: #bfbfbf;
-  --gray-4: #aaa;
-  --gray-5: #949494;
-  --gray-6: #7f7f7f;
-  --gray-7: #6a6a6a;
-  --gray-8: #555;
-  --gray-9: #404040;
-  --gray-10: #2a2a2a;
-  --gray-11: #151515;
-  --gray-12: #000;
+  --gray-3: #b0b0b0;
+  --gray-4: #8a8a8a;
+  --gray-5: #6b6b6b;
+  --gray-6: #525252;
+  --gray-7: #3f3f3f;
+  --gray-8: #2e2e2e;
+  --gray-9: #1c1c1c;
+  --gray-10: #141414;
+  --gray-11: #0a0a0a;
+  --gray-12: #050505;
 
-  --blue-light: #e8f4fd;
-  --blue-dark: #3b82f6;
+  --blue-light: #e0f7ff;
+  --blue-dark: #00b8d9;
 
-  --green-light: #e8fce9;
+  --green-light: #e6f9ec;
   --green-dark: #10b981;
 
   --yellow-light: #fef9e7;
-  --yellow-dark: #fbbf24;
+  --yellow-dark: #eab308;
 
-  --orange-light: #fef3e7;
+  --orange-light: #fff1eb;
   --orange-dark: #f97316;
 
   --red-light: #fee8e8;
@@ -34,6 +34,18 @@
   --pink-light: #fde8f2;
   --pink-dark: #ec4899;
 
-  --cyan-light: #e8fffe;
-  --cyan-dark: #06b6d4;
+  --cyan-light: #e0fffe;
+  --cyan-dark: #00e5ff;
+
+  /* Brand palette — SIGNAL */
+  --brand-cyan: #00e5ff;
+  --brand-cyan-dim: #00b8d4;
+  --brand-cyan-glow: rgba(0, 229, 255, 0.15);
+  --brand-coral: #ff6b6b;
+  --brand-coral-dim: #e85d5d;
+  --brand-coral-glow: rgba(255, 107, 107, 0.15);
+  --brand-black: #09090b;
+  --brand-dark: #111113;
+  --brand-surface: #18181b;
+  --brand-cream: #fafaf9;
 }

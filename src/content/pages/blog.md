@@ -2,17 +2,17 @@
 _schema: default
 title: Blog
 description: >-
-  Read our latest articles and insights on web development, design, and
-  technology.
+  Hard-won lessons on growth marketing, brand building, and cutting through
+  the noise. No fluff.
 pageSections:
   - _component: page-sections/heroes/hero-center
-    eyebrow: ''
-    heading: All posts
+    eyebrow: THE SIGNAL BLOG
+    heading: "Lessons from the front lines"
     subtext: >-
-      This paginated blog index displays a grid of article cards, each waiting
-      to be populated with genuine posts once your content strategy moves beyond
-      placeholder text.
+      Unfiltered takes on marketing, growth, and building brands that matter.
+      Written by the people doing the work, not a content farm.
     buttonSections: []
-    colorScheme: inherit
+    colorScheme: dark
     backgroundColor: base
+    paddingVertical: 4xl
 ---

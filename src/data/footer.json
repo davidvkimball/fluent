@@ -1,33 +1,41 @@
 {
-  "logoSource": "/images/logo.svg",
-  "logoAlt": "Logo",
+  "logoSource": "/images/logo-dark.svg",
+  "logoAlt": "SIGNAL",
   "links": [
     {
-      "name": "Home",
-      "path": "/"
+      "name": "Services",
+      "path": "/services/"
     },
     {
-      "name": "Why",
-      "path": "/why/"
+      "name": "Work",
+      "path": "/work/"
+    },
+    {
+      "name": "About",
+      "path": "/about/"
     },
     {
       "name": "Blog",
       "path": "/blog/"
+    },
+    {
+      "name": "Contact",
+      "path": "/contact/"
     }
   ],
   "socials": [
     {
-      "icon": "social/github",
-      "link": "https://github.com"
-    },
-    {
       "icon": "social/x",
-      "link": "https://twitter.com"
+      "link": "https://twitter.com/signalhq"
     },
     {
       "icon": "social/linkedin",
-      "link": "https://linkedin.com"
+      "link": "https://linkedin.com/company/signal-agency"
+    },
+    {
+      "icon": "social/instagram",
+      "link": "https://instagram.com/signalhq"
     }
   ],
-  "footerText": "© 2026 All rights reserved."
+  "footerText": "SIGNAL Agency. Cut through the noise."
 }

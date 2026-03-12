@@ -21,7 +21,7 @@ const pageImage = props.image || seoData.logoSource;
 <!doctype html>
 <html
   lang="en"
-  data-theme="light"
+  data-theme="dark"
 >
   <head>
     <meta charset="UTF-8" />
@@ -38,6 +38,9 @@ const pageImage = props.image || seoData.logoSource;
       name="generator"
       content={Astro.generator}
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <style is:inline>
       @layer reset, base, components, page-sections, utils, overrides;
     </style>
@@ -98,6 +101,25 @@ const pageImage = props.image || seoData.logoSource;
     <script>
       import "@choctawnationofoklahoma/lite-vimeo";
       import "@justinribeiro/lite-youtube";
+    </script>
+    <script>
+      // Scroll-driven reveal animations for page sections
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("fluent-visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
+      );
+
+      document.querySelectorAll(".custom-section").forEach((el) => {
+        el.classList.add("fluent-animate");
+        observer.observe(el);
+      });
     </script>
   </body>
 </html>

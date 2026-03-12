@@ -1,37 +1,39 @@
-/* Dark theme */
+/* Dark theme — SIGNAL brand: deep black + electric cyan */
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --color-brand: var(--gray-0);
-  --color-brand-muted: var(--gray-3);
+  --color-brand: var(--brand-cyan);
+  --color-brand-muted: var(--brand-cyan-dim);
   --color-brand-subtle: var(--gray-5);
-  --color-brand-on: var(--gray-12);
+  --color-brand-on: var(--brand-black);
 
-  --color-text: var(--gray-1);
+  --color-text: var(--gray-2);
   --color-text-strong: var(--gray-0);
-  --color-text-muted: var(--gray-0);
+  --color-text-muted: var(--gray-4);
   --color-text-on-muted: var(--gray-0);
-  --color-text-on-brand: var(--gray-12);
-  --color-text-inverse: var(--gray-12);
-  --color-link: #60a5fa;
-  --color-link-hover: #93c5fd;
+  --color-text-on-brand: var(--brand-black);
+  --color-text-inverse: var(--brand-black);
+  --color-link: var(--brand-cyan);
+  --color-link-hover: var(--brand-coral);
 
-  --color-bg: var(--gray-12);
-  --color-bg-surface: var(--gray-11);
-  --color-bg-muted: var(--gray-10);
-  --color-bg-accent: rgb(35, 54, 98);
-  --color-bg-highlight: rgb(94, 65, 28);
+  --color-bg: var(--brand-black);
+  --color-bg-surface: var(--brand-surface);
+  --color-bg-muted: #27272a;
+  --color-bg-accent: var(--brand-cyan-glow);
+  --color-bg-highlight: var(--brand-coral-glow);
   --color-bg-brand: var(--color-brand);
   --color-bg-brand-muted: var(--color-brand-muted);
-  --color-bg-inverse: var(--gray-1);
+  --color-bg-inverse: var(--gray-0);
 
-  --color-border: var(--gray-8);
-  --color-border-strong: var(--gray-4);
-  --color-border-subtle: var(--gray-8);
+  --color-border: #27272a;
+  --color-border-strong: var(--gray-6);
+  --color-border-subtle: #1e1e21;
+  --color-border-inputs: var(--gray-6);
 
-  --color-state-hover: rgba(255, 255, 255, 0.04);
-  --color-state-active: rgba(255, 255, 255, 0.08);
-  --color-overlay: rgba(0, 0, 0, 0.7);
+  --color-state-hover: rgba(0, 229, 255, 0.06);
+  --color-state-active: rgba(0, 229, 255, 0.12);
+  --color-overlay: rgba(0, 0, 0, 0.8);
 
-  --color-focus-ring: rgba(0, 122, 255, 0.4);
+  --color-focus-ring: rgba(0, 229, 255, 0.4);
+  --color-error: var(--brand-coral);
 }

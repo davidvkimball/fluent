@@ -1,6 +1,6 @@
 {
-  "logoSource": "/images/logo.svg",
-  "logoAlt": "Logo",
+  "logoSource": "/images/logo-dark.svg",
+  "logoAlt": "SIGNAL",
   "navData": [
     {
       "name": "Home",
@@ -8,8 +8,18 @@
       "children": []
     },
     {
-      "name": "Why",
-      "path": "/why/",
+      "name": "Services",
+      "path": "/services/",
+      "children": []
+    },
+    {
+      "name": "Work",
+      "path": "/work/",
+      "children": []
+    },
+    {
+      "name": "About",
+      "path": "/about/",
       "children": []
     },
     {
@@ -21,13 +31,10 @@
   "buttonSections": [
     {
       "_component": "building-blocks/core-elements/button",
-      "text": "Search",
-      "hideText": true,
-      "link": "/search/",
-      "iconName": "magnifying-glass",
-      "iconPosition": "before",
-      "variant": "ghost",
-      "size": "lg"
+      "text": "Start a Project",
+      "link": "/contact/",
+      "variant": "primary",
+      "size": "md"
     }
   ]
 }

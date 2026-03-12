@@ -1,7 +1,7 @@
 ---
 _schema: default
 title: Search
-description: Search your site content with fast static search powered by Pagefind.
+description: Search everything on Fluent with fast, instant static search.
 pageSections:
   - _component: page-sections/heroes/hero-center
     eyebrow:

@@ -1,160 +1,166 @@
 ---
 _schema: default
-title: Astro Component Starter
-description: Build fast, customizable Astro sites with a modern component starter that is easy to edit and maintain.
+title: Home
+description: "SIGNAL is a growth marketing agency that builds brands people actually remember. Strategy, design, and performance under one roof."
 pageSections:
   - _component: page-sections/heroes/hero-center
-    eyebrow:
-    heading: The Astro Component Starter for building any site
+    eyebrow: GROWTH MARKETING AGENCY
+    heading: "Cut through the noise"
     subtext: >-
-      Built on web fundamentals. Easy to customize, fast to use, and simple to
-      maintain.
+      Most marketing is invisible. Forgettable campaigns, wasted ad spend,
+      websites that look like everyone else's. SIGNAL exists because your brand
+      deserves better than the algorithm's table scraps. We build marketing
+      systems that compound.
     buttonSections:
       - _component: building-blocks/core-elements/button
-        text: Explore Components
-        hideText: false
-        link: /component-docs/
-        iconName: ''
-        iconPosition: before
+        text: Start a Project
+        link: /contact/
         variant: primary
-        size: md
+        size: lg
       - _component: building-blocks/core-elements/button
-        text: View in GitHub
-        hideText: false
-        link: https://github.com/CloudCannon/astro-component-starter
-        iconName: ''
-        iconPosition: before
+        text: See Our Work
+        link: /work/
         variant: secondary
-        size: md
-    colorScheme: inherit
+        size: lg
+    colorScheme: dark
     backgroundColor: base
-  - _component: page-sections/features/feature-split
-    eyebrow: Built for Astro
-    heading: Fast, modern, and easy to work with
-    subtext: >-
-      The Component Starter takes full advantage of Astro's zero-JS-by-default
-      approach. You get fast pages, simple routing, and a component system that
-      stays easy to use as your site grows.
-    buttonSections: []
-    imageSource: /src/assets/images/component-docs/website-feature.svg
-    imageAlt: Website Feature
-    imageAspectRatio: none
-    imageRounded: false
-    reverse: false
-    colorScheme: inherit
-    backgroundColor: base
-  - _component: page-sections/features/feature-split
-    eyebrow: CloudCannon Ready
-    heading: Easy visual editing
-    subtext: >-
-      Every component is built to work seamlessly in CloudCannon's Visual
-      Editor. Developers can create and style custom Page Sections with Astro.
-      Editors can click, change, and rearrange content right on the page without
-      touching the code or guessing where anything lives.
-    buttonSections: []
-    imageSource: /src/assets/images/component-docs/website-split.svg
-    imageAlt: Website Split
-    imageAspectRatio: none
-    imageRounded: false
-    reverse: true
-    colorScheme: inherit
-    backgroundColor:
-    paddingVertical: lg
-  - _component: page-sections/features/feature-split
-    eyebrow: Performance
-    heading: Fast by architecture, not by accident
-    subtext: >-
-      Your components render to static HTML, keeping bundles lean and pages
-      instant. Your users get instant page loads. You get a modern developer
-      experience.
-    buttonSections: []
-    imageSource: /src/assets/images/component-docs/website-hero.svg
-    imageAlt: Website Hero
-    imageAspectRatio: none
-    imageRounded: false
-    reverse: false
-    colorScheme: inherit
-    backgroundColor: base
-  - _component: page-sections/features/feature-split
-    eyebrow: Documentation
-    heading: Every component, clearly documented
-    subtext: >-
-      Each component comes with straightforward docs, real examples, full
-      descriptions of every property, and clear guidance without having to dig
-      through source files.
-    buttonSections: []
-    imageSource: /src/assets/images/component-docs/website-documented.svg
-    imageAlt: Website Hero
-    imageAspectRatio: none
-    imageRounded: false
-    reverse: true
-    colorScheme: inherit
-    backgroundColor: base
+    paddingVertical: 6xl
+
   - _component: page-sections/features/feature-grid
-    eyebrow: Principles
-    heading: Built for real-world web projects
-    subtext: No trends. No noise. Just reliability.
-    gap: xl
-    minItemWidth: 280
-    maxItemWidth: 360
-    features:
-      - title: Web fundamentals
-        description: >-
-          Semantic HTML. Lean CSS. JavaScript only when it's needed. The stack
-          is boring by design, and that’s exactly why it works.
-        iconName: cube
-        iconColor: blue
-      - title: Built for speed
-        description: >-
-          Static-rendered, minimal payloads, zero waste. Built to be extremely
-          fast from the first byte.
-        iconName: bolt
-        iconColor: yellow
-      - title: Everything just fits
-        description: >-
-          Simple, predictable components that play nice together. Build bigger
-          pieces without creating a maintenance mess.
-        iconName: puzzle-piece
-        iconColor: green
-      - title: Controlled editing
-        description: >-
-          Enough freedom for editors to move fast. Enough structure for
-          developers to sleep at night.
-        iconName: pencil
-        iconColor: purple
-      - title: Adaptable
-        description: >-
-          Purposefully plain styling. The whole component starter adapts to your
-          designs without a fight.
-        iconName: paint-brush
-        iconColor: pink
-    colorScheme: inherit
-    backgroundColor: surface
-    align: center
-  - _component: page-sections/ctas/cta-center
-    heading: Ready to start building?
+    eyebrow: WHAT WE DO
+    heading: "Full-stack growth, no fluff"
     subtext: >-
-      Browse the complete Astro Component Starter and see live examples of every
-      component in action. All components are ready to use in CloudCannon and
-      are fully customizable.
-    buttonSections:
-      - _component: building-blocks/core-elements/button
-        text: Explore Components
-        hideText: false
-        link: /component-docs/
-        iconName: ''
-        iconPosition: before
-        variant: primary
-        size: md
-      - _component: building-blocks/core-elements/button
-        text: View in GitHub
-        hideText: false
-        link: https://github.com/CloudCannon/astro-component-starter
-        iconName: ''
-        iconPosition: before
-        variant: tertiary
-        size: md
+      Strategy to execution. We do not hand you a PDF and wish you luck.
+      Every engagement ships real work that drives real numbers.
+    features:
+      - _component: page-sections/features/feature-grid/feature-item
+        iconName: chart-bar
+        heading: Performance Marketing
+        description: >-
+          Paid search, paid social, programmatic. We manage seven-figure
+          budgets and obsess over ROAS so you do not have to.
+      - _component: page-sections/features/feature-grid/feature-item
+        iconName: magnifying-glass
+        heading: SEO & Content
+        description: >-
+          Technical SEO audits, content strategy, link building. Organic
+          traffic that compounds month over month.
+      - _component: page-sections/features/feature-grid/feature-item
+        iconName: paint-brush
+        heading: Brand & Creative
+        description: >-
+          Visual identity, messaging frameworks, campaign creative. Brands
+          people recognize before they read the logo.
+      - _component: page-sections/features/feature-grid/feature-item
+        iconName: code-bracket
+        heading: Web Development
+        description: >-
+          Fast, conversion-optimized websites built on modern stacks. No
+          WordPress themes. No page builders. Clean code.
+      - _component: page-sections/features/feature-grid/feature-item
+        iconName: envelope
+        heading: Email & Lifecycle
+        description: >-
+          Automated flows, segmentation, deliverability. Turn one-time buyers
+          into repeat customers without burning your list.
+      - _component: page-sections/features/feature-grid/feature-item
+        iconName: presentation-chart-line
+        heading: Analytics & CRO
+        description: >-
+          GA4 setups, conversion tracking, A/B testing. Decisions backed by
+          data, not gut feelings and vanity metrics.
     colorScheme: dark
     backgroundColor: surface
-    rounded: false
+    paddingVertical: 5xl
+
+  - _component: page-sections/features/feature-split
+    eyebrow: CASE STUDY
+    heading: "Meridian Outdoors: 340% revenue growth in 9 months"
+    subtext: >-
+      Meridian came to us spending $40K/month on Meta ads with a 1.2x ROAS.
+      We rebuilt their funnel from the ground up: new landing pages, restructured
+      campaigns, lifecycle email flows. Nine months later they hit $2.1M in
+      monthly revenue with a 4.8x blended ROAS.
+    buttonSections:
+      - _component: building-blocks/core-elements/button
+        text: See All Work
+        link: /work/
+        variant: primary
+        size: md
+    imageSource: /src/assets/images/component-docs/sunset.jpg
+    imageAlt: Meridian Outdoors campaign results
+    imageAspectRatio: landscape
+    imageRounded: true
+    reverse: false
+    colorScheme: dark
+    backgroundColor: base
+    paddingVertical: 5xl
+
+  - _component: page-sections/features/feature-split
+    eyebrow: CASE STUDY
+    heading: "Vault Health: from 0 to 12K organic visitors/month"
+    subtext: >-
+      A telehealth startup with zero organic presence. We built their content
+      engine from scratch. 180 pages of medically-reviewed content, a technical
+      SEO overhaul, and strategic link building. They now rank for 2,400+
+      keywords and organic is their highest-converting channel.
+    buttonSections:
+      - _component: building-blocks/core-elements/button
+        text: Read the Details
+        link: /work/
+        variant: primary
+        size: md
+    imageSource: /src/assets/images/component-docs/castle.jpg
+    imageAlt: Vault Health SEO results
+    imageAspectRatio: landscape
+    imageRounded: true
+    reverse: true
+    colorScheme: dark
+    backgroundColor: surface
+    paddingVertical: 5xl
+
+  - _component: page-sections/people/testimonial-section
+    heading: "What our clients say"
+    colorScheme: dark
+    backgroundColor: base
+    paddingVertical: 5xl
+    testimonials:
+      - quote: >-
+          SIGNAL is the first agency that actually moved our numbers. Not
+          vanity metrics, real revenue. They think like operators, not
+          consultants.
+        author: Rachel Torres
+        role: CEO, Meridian Outdoors
+      - quote: >-
+          We interviewed eight agencies. SIGNAL was the only one that told us
+          what we were doing wrong in the pitch instead of just agreeing with
+          everything. That honesty has saved us hundreds of thousands.
+        author: James Liu
+        role: VP Marketing, Vault Health
+      - quote: >-
+          They rebuilt our entire web presence in six weeks. The site loads in
+          under a second, conversions doubled, and our team can actually
+          update it without filing a ticket.
+        author: Maria Okafor
+        role: Head of Growth, Basecamp Labs
+
+  - _component: page-sections/ctas/cta-center
+    heading: "Ready to stop guessing?"
+    subtext: >-
+      Tell us what you are working on. If we can help, we will tell you how.
+      If we cannot, we will tell you that too.
+    buttonSections:
+      - _component: building-blocks/core-elements/button
+        text: Start a Conversation
+        link: /contact/
+        variant: primary
+        size: lg
+      - _component: building-blocks/core-elements/button
+        text: See Our Work
+        link: /work/
+        variant: ghost
+        size: lg
+    colorScheme: dark
+    backgroundColor: surface
+    paddingVertical: 6xl
 ---

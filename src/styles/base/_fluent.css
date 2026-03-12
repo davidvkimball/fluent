@@ -1,0 +1,205 @@
+/* SIGNAL — Custom visual effects and brand styling */
+
+@layer base {
+
+  /* Animated gradient mesh for hero */
+  .hero-center,
+  .hero {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-center::before,
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: -60%;
+    background:
+      radial-gradient(ellipse at 30% 40%, rgba(0, 229, 255, 0.12) 0%, transparent 55%),
+      radial-gradient(ellipse at 70% 60%, rgba(255, 107, 107, 0.08) 0%, transparent 55%);
+    animation: signal-drift 18s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  [data-theme="light"] .hero-center::before,
+  [data-theme="light"] .hero::before {
+    background:
+      radial-gradient(ellipse at 30% 40%, rgba(0, 229, 255, 0.06) 0%, transparent 55%),
+      radial-gradient(ellipse at 70% 60%, rgba(255, 107, 107, 0.04) 0%, transparent 55%);
+  }
+
+  @keyframes signal-drift {
+    0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+    50% { transform: translate(5%, -4%) rotate(1.5deg) scale(1.05); }
+    100% { transform: translate(-3%, 3%) rotate(-1deg) scale(0.97); }
+  }
+
+  /* Scroll-triggered section animation */
+  .fluent-animate {
+    opacity: 0;
+    transform: translateY(36px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .fluent-animate.fluent-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Cyan glow text */
+  .signal-glow {
+    color: var(--brand-cyan);
+    text-shadow: 0 0 40px rgba(0, 229, 255, 0.3), 0 0 80px rgba(0, 229, 255, 0.1);
+  }
+
+  [data-theme="light"] .signal-glow {
+    color: var(--brand-cyan-dim);
+    text-shadow: none;
+  }
+
+  /* Coral accent text */
+  .signal-coral {
+    color: var(--brand-coral);
+  }
+
+  /* Gradient text: cyan to coral */
+  .signal-gradient-text {
+    background: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-coral) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glassmorphism */
+  .signal-glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  [data-theme="light"] .signal-glass {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  /* Neon border glow on hover */
+  .signal-border-glow {
+    position: relative;
+    transition: box-shadow 0.4s ease;
+  }
+
+  .signal-border-glow:hover {
+    box-shadow: 0 0 0 1px var(--brand-cyan), 0 0 30px rgba(0, 229, 255, 0.1);
+  }
+
+  /* Grid dot pattern */
+  .signal-dots {
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  [data-theme="light"] .signal-dots {
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  }
+
+  /* Subtle noise grain */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    opacity: 0.015;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Smooth scroll */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Selection */
+  ::selection {
+    background: rgba(0, 229, 255, 0.25);
+    color: inherit;
+  }
+
+  [data-theme="light"] ::selection {
+    background: rgba(0, 184, 212, 0.2);
+  }
+
+  /* Tighter heading tracking */
+  h1 { letter-spacing: -0.035em; }
+  h2 { letter-spacing: -0.025em; }
+  h3 { letter-spacing: -0.02em; }
+
+  /* Animated underline links */
+  main a:not(.button-inner):not(.card-inner):not([class]) {
+    text-decoration: none;
+    background-image: linear-gradient(var(--brand-cyan), var(--brand-cyan));
+    background-position: 0% 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 1px;
+    transition: background-size 0.3s ease;
+  }
+
+  main a:not(.button-inner):not(.card-inner):not([class]):hover {
+    background-size: 100% 1px;
+  }
+
+  /* Counter / stat glow */
+  .counter {
+    color: var(--brand-cyan) !important;
+  }
+
+  /* Pulsing dot */
+  @keyframes signal-pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4); }
+    50% { opacity: 0.8; box-shadow: 0 0 0 8px rgba(0, 229, 255, 0); }
+  }
+
+  .signal-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--brand-cyan);
+    animation: signal-pulse 2s ease-in-out infinite;
+    display: inline-block;
+  }
+
+  /* Horizontal rule with gradient */
+  hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-border), transparent);
+  }
+
+  /* Feature card icon color override */
+  .feature-grid-item .icon {
+    color: var(--brand-cyan);
+  }
+
+  /* Eyebrow with cyan accent */
+  .eyebrow {
+    color: var(--brand-cyan) !important;
+  }
+
+  [data-theme="light"] .eyebrow {
+    color: var(--brand-cyan-dim) !important;
+  }
+
+  /* CTA sections get a subtle top gradient border */
+  .cta-center::before,
+  .cta-form::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--brand-cyan), var(--brand-coral), transparent);
+    opacity: 0.4;
+  }
+}

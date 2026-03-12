@@ -60,7 +60,30 @@ const {
 
 <style>
   @layer page-sections {
-    :global(.subtext) :global(p) {
+    :global(.hero-center) {
+      position: relative;
+      overflow: hidden;
+    }
+
+    :global(.hero-center)::before {
+      content: "";
+      position: absolute;
+      inset: -50%;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 30%, rgba(212, 168, 83, 0.06) 0%, transparent 50%);
+      animation: hero-drift 25s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes hero-drift {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(3%, -2%) scale(1.03); }
+      100% { transform: translate(-2%, 3%) scale(0.98); }
+    }
+
+    :global(.hero-center) :global(.subtext) :global(p) {
       font-size: var(--font-size-lg);
     }
   }
