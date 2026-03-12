@@ -1,0 +1,790 @@
+---
+import { getCollection } from "astro:content";
+
+// Build search data at compile time
+const pages = await getCollection("pages");
+const blogPosts = await getCollection("blog");
+
+const searchItems = [
+  ...pages.map((page) => ({
+    title: page.data.title || page.id,
+    description: page.data.description || "",
+    url: page.id === "index" ? "/" : `/${page.id}/`,
+    category: "page" as const,
+  })),
+  ...blogPosts.map((post) => ({
+    title: post.data.title || post.id,
+    description: post.data.description || "",
+    url: `/blog/${post.id}/`,
+    category: "post" as const,
+  })),
+];
+
+const searchDataJson = JSON.stringify(searchItems);
+---
+
+<dialog class="cmd" id="cmd-palette">
+  <div class="cmd__backdrop" data-cmd-close></div>
+  <div class="cmd__container">
+    <div class="cmd__glow" aria-hidden="true"></div>
+    <div class="cmd__border" aria-hidden="true"></div>
+    <div class="cmd__inner">
+      <div class="cmd__header">
+        <div class="cmd__input-wrap">
+          <svg class="cmd__search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+          </svg>
+          <input
+            type="text"
+            class="cmd__input"
+            id="cmd-input"
+            placeholder="Search pages, articles, actions..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <kbd class="cmd__esc">ESC</kbd>
+        </div>
+      </div>
+      <div class="cmd__divider"></div>
+      <div class="cmd__body" id="cmd-results">
+        <!-- Results injected by JS -->
+      </div>
+      <div class="cmd__footer">
+        <div class="cmd__hints">
+          <span class="cmd__hint"><kbd>&uarr;</kbd><kbd>&darr;</kbd> navigate</span>
+          <span class="cmd__hint"><kbd>&crarr;</kbd> open</span>
+          <span class="cmd__hint"><kbd>esc</kbd> close</span>
+        </div>
+        <span class="cmd__brand">SIGNAL</span>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script define:vars={{ searchDataJson }}>
+  // Expose search data to the client
+  window.__CMD_SEARCH_DATA__ = JSON.parse(searchDataJson);
+</script>
+
+<script>
+  const CATEGORIES = {
+    action: { label: "Actions", icon: "⚡" },
+    page: { label: "Pages", icon: "◇" },
+    post: { label: "Articles", icon: "▤" },
+  };
+
+  const ACTIONS = [
+    { title: "Toggle theme", description: "Switch between light and dark mode", category: "action", action: "toggle-theme" },
+    { title: "Go to top", description: "Scroll to the top of the page", category: "action", action: "scroll-top" },
+    { title: "Contact us", description: "Start a project with SIGNAL", category: "action", url: "/contact/" },
+  ];
+
+  function fuzzyMatch(query: string, text: string): { score: number; indices: number[] } {
+    const q = query.toLowerCase();
+    const t = text.toLowerCase();
+    const indices: number[] = [];
+    let score = 0;
+    let qi = 0;
+    let lastMatchIndex = -1;
+
+    // Exact substring match bonus
+    if (t.includes(q)) {
+      score += 100;
+    }
+
+    // Word start bonus
+    const words = t.split(/\s+/);
+    for (const word of words) {
+      if (word.startsWith(q)) {
+        score += 80;
+        break;
+      }
+    }
+
+    for (let ti = 0; ti < t.length && qi < q.length; ti++) {
+      if (t[ti] === q[qi]) {
+        indices.push(ti);
+        score += 10;
+        // Consecutive match bonus
+        if (ti === lastMatchIndex + 1) score += 15;
+        // Word boundary bonus
+        if (ti === 0 || t[ti - 1] === ' ' || t[ti - 1] === '-') score += 10;
+        lastMatchIndex = ti;
+        qi++;
+      }
+    }
+
+    // All characters matched?
+    if (qi < q.length) return { score: 0, indices: [] };
+
+    // Shorter strings score higher for same matches
+    score -= t.length * 0.5;
+
+    return { score, indices };
+  }
+
+  function highlightText(text: string, indices: number[]): string {
+    if (!indices.length) return escapeHtml(text);
+    const chars = text.split('');
+    const indexSet = new Set(indices);
+    let result = '';
+    let inHighlight = false;
+
+    for (let i = 0; i < chars.length; i++) {
+      if (indexSet.has(i) && !inHighlight) {
+        result += '<mark class="cmd__mark">';
+        inHighlight = true;
+      } else if (!indexSet.has(i) && inHighlight) {
+        result += '</mark>';
+        inHighlight = false;
+      }
+      result += escapeHtml(chars[i]);
+    }
+    if (inHighlight) result += '</mark>';
+    return result;
+  }
+
+  function escapeHtml(text: string): string {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function renderResults(results: any[], query: string) {
+    const body = document.getElementById('cmd-results');
+    if (!body) return;
+
+    if (!query.trim()) {
+      // Show default grouped view
+      const grouped: Record<string, any[]> = {};
+      for (const item of [...ACTIONS, ...((window as any).__CMD_SEARCH_DATA__ || [])]) {
+        const cat = item.category || 'page';
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push({ ...item, titleHtml: escapeHtml(item.title), score: 0 });
+      }
+      renderGrouped(body, grouped);
+      return;
+    }
+
+    if (results.length === 0) {
+      body.innerHTML = `
+        <div class="cmd__empty">
+          <div class="cmd__empty-icon">∅</div>
+          <p class="cmd__empty-text">No results for "${escapeHtml(query)}"</p>
+          <p class="cmd__empty-hint">Try a different search term</p>
+        </div>
+      `;
+      return;
+    }
+
+    const grouped: Record<string, any[]> = {};
+    for (const r of results) {
+      const cat = r.category || 'page';
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(r);
+    }
+    renderGrouped(body, grouped);
+  }
+
+  function renderGrouped(body: HTMLElement, grouped: Record<string, any[]>) {
+    const order = ['action', 'page', 'post'];
+    let html = '';
+    let globalIndex = 0;
+
+    for (const cat of order) {
+      const items = grouped[cat];
+      if (!items || !items.length) continue;
+      const catInfo = CATEGORIES[cat as keyof typeof CATEGORIES] || { label: cat, icon: "•" };
+
+      html += `<div class="cmd__group">`;
+      html += `<div class="cmd__group-label"><span class="cmd__group-icon">${catInfo.icon}</span>${catInfo.label}</div>`;
+
+      for (const item of items) {
+        const dataAttrs = item.action
+          ? `data-action="${item.action}"`
+          : `data-url="${item.url || '#'}"`;
+
+        html += `
+          <a class="cmd__result" data-index="${globalIndex}" ${dataAttrs} ${!item.action ? `href="${item.url || '#'}"` : 'href="#"'}>
+            <div class="cmd__result-text">
+              <span class="cmd__result-title">${item.titleHtml || escapeHtml(item.title)}</span>
+              ${item.description ? `<span class="cmd__result-desc">${escapeHtml(item.description)}</span>` : ''}
+            </div>
+            <svg class="cmd__result-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m9 18 6-6-6-6"></path>
+            </svg>
+          </a>
+        `;
+        globalIndex++;
+      }
+      html += `</div>`;
+    }
+
+    body.innerHTML = html;
+  }
+
+  function search(query: string) {
+    const data: any[] = (window as any).__CMD_SEARCH_DATA__ || [];
+    const allItems = [...ACTIONS, ...data];
+
+    if (!query.trim()) {
+      renderResults([], '');
+      return;
+    }
+
+    const results = allItems
+      .map((item) => {
+        const titleMatch = fuzzyMatch(query, item.title);
+        const descMatch = fuzzyMatch(query, item.description || '');
+        const bestScore = Math.max(titleMatch.score, descMatch.score * 0.6);
+
+        return {
+          ...item,
+          score: bestScore,
+          titleHtml: titleMatch.score > 0 ? highlightText(item.title, titleMatch.indices) : escapeHtml(item.title),
+        };
+      })
+      .filter((r) => r.score > 0)
+      .sort((a, b) => b.score - a.score);
+
+    renderResults(results, query);
+  }
+
+  // Keyboard navigation
+  let activeIndex = -1;
+
+  function getResultElements(): HTMLElement[] {
+    return Array.from(document.querySelectorAll('.cmd__result'));
+  }
+
+  function setActive(index: number) {
+    const results = getResultElements();
+    results.forEach((el, i) => {
+      el.classList.toggle('cmd__result--active', i === index);
+      if (i === index) {
+        el.scrollIntoView({ block: 'nearest' });
+      }
+    });
+    activeIndex = index;
+  }
+
+  function executeResult(el: HTMLElement) {
+    const action = el.dataset.action;
+    const url = el.dataset.url || el.getAttribute('href');
+    const dialog = document.getElementById('cmd-palette') as HTMLDialogElement;
+
+    if (action === 'toggle-theme') {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      html.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+      dialog?.close();
+    } else if (action === 'scroll-top') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      dialog?.close();
+    } else if (url && url !== '#') {
+      dialog?.close();
+      window.location.href = url;
+    }
+  }
+
+  function initCommandPalette() {
+    const dialog = document.getElementById('cmd-palette') as HTMLDialogElement;
+    const input = document.getElementById('cmd-input') as HTMLInputElement;
+    if (!dialog || !input) return;
+
+    // Open handler
+    function openPalette() {
+      dialog.showModal();
+      input.value = '';
+      activeIndex = -1;
+      search('');
+      // Focus after animation frame for smooth transition
+      requestAnimationFrame(() => input.focus());
+    }
+
+    // Close on backdrop click
+    dialog.querySelectorAll('[data-cmd-close]').forEach((el) => {
+      el.addEventListener('click', () => dialog.close());
+    });
+
+    // Close on dialog click outside container
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    // Search input
+    input.addEventListener('input', () => {
+      activeIndex = -1;
+      search(input.value);
+    });
+
+    // Keyboard navigation within dialog
+    dialog.addEventListener('keydown', (e: KeyboardEvent) => {
+      const results = getResultElements();
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActive(activeIndex < results.length - 1 ? activeIndex + 1 : 0);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActive(activeIndex > 0 ? activeIndex - 1 : results.length - 1);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (activeIndex >= 0 && results[activeIndex]) {
+          executeResult(results[activeIndex]);
+        }
+      }
+    });
+
+    // Click on results
+    document.addEventListener('click', (e) => {
+      const result = (e.target as HTMLElement).closest('.cmd__result') as HTMLElement;
+      if (result) {
+        const action = result.dataset.action;
+        if (action) {
+          e.preventDefault();
+          executeResult(result);
+        }
+        // If it's a regular link, let the browser navigate naturally
+      }
+    });
+
+    // Global Ctrl+K / Cmd+K
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        if (dialog.open) {
+          dialog.close();
+        } else {
+          openPalette();
+        }
+      }
+    });
+
+    // Trigger button
+    document.querySelectorAll('[data-cmd-trigger]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openPalette();
+      });
+    });
+  }
+
+  // Init on load and on client-side navigation
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCommandPalette);
+  } else {
+    initCommandPalette();
+  }
+
+  document.addEventListener('astro:after-swap', initCommandPalette);
+</script>
+
+<style is:global>
+  @layer components {
+    /* === DIALOG BASE === */
+    .cmd[open] {
+      display: flex;
+    }
+
+    .cmd {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: min(20vh, 140px);
+      border: none;
+      background: none;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      overflow: visible;
+    }
+
+    .cmd::backdrop {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      animation: cmd-backdrop-in 0.2s ease forwards;
+    }
+
+    @keyframes cmd-backdrop-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* === BACKDROP CLICK TARGET === */
+    .cmd__backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    /* === CONTAINER === */
+    .cmd__container {
+      position: relative;
+      width: min(640px, calc(100vw - 32px));
+      z-index: 1;
+      animation: cmd-slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes cmd-slide-in {
+      from {
+        opacity: 0;
+        transform: scale(0.96) translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    /* === ANIMATED GRADIENT BORDER === */
+    .cmd__border {
+      position: absolute;
+      inset: -1px;
+      border-radius: 17px;
+      background: conic-gradient(
+        from var(--cmd-angle, 0deg),
+        var(--brand-cyan),
+        rgba(0, 229, 255, 0.15),
+        var(--brand-coral),
+        rgba(255, 107, 107, 0.15),
+        var(--brand-cyan)
+      );
+      animation: cmd-border-spin 4s linear infinite;
+      opacity: 0.7;
+    }
+
+    @property --cmd-angle {
+      syntax: "<angle>";
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    @keyframes cmd-border-spin {
+      to { --cmd-angle: 360deg; }
+    }
+
+    /* === OUTER GLOW === */
+    .cmd__glow {
+      position: absolute;
+      inset: -40px;
+      border-radius: 60px;
+      background: radial-gradient(ellipse at center, rgba(0, 229, 255, 0.08) 0%, transparent 70%);
+      filter: blur(20px);
+      pointer-events: none;
+      animation: cmd-glow-pulse 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes cmd-glow-pulse {
+      from { opacity: 0.5; }
+      to { opacity: 1; }
+    }
+
+    /* === INNER PANEL === */
+    .cmd__inner {
+      position: relative;
+      background: color-mix(in srgb, var(--color-bg) 92%, transparent);
+      backdrop-filter: blur(24px) saturate(1.4);
+      -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 24px 80px -12px rgba(0, 0, 0, 0.5),
+        0 0 60px -20px rgba(0, 229, 255, 0.15);
+    }
+
+    [data-theme="light"] .cmd__inner {
+      background: color-mix(in srgb, var(--color-bg) 96%, transparent);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.08),
+        0 24px 80px -12px rgba(0, 0, 0, 0.15),
+        0 0 60px -20px rgba(0, 184, 212, 0.1);
+    }
+
+    /* === HEADER / INPUT === */
+    .cmd__header {
+      padding: 16px 20px;
+    }
+
+    .cmd__input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cmd__search-icon {
+      color: var(--brand-cyan);
+      flex-shrink: 0;
+      opacity: 0.8;
+    }
+
+    .cmd__input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      font-size: 17px;
+      font-family: var(--font-body);
+      color: var(--color-text-strong);
+      caret-color: var(--brand-cyan);
+    }
+
+    .cmd__input::placeholder {
+      color: var(--color-text-subtle);
+      opacity: 0.6;
+    }
+
+    .cmd__esc {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--color-text-subtle);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    [data-theme="light"] .cmd__esc {
+      background: rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* === DIVIDER === */
+    .cmd__divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 5%, var(--brand-cyan) 30%, var(--brand-coral) 70%, transparent 95%);
+      opacity: 0.2;
+    }
+
+    /* === RESULTS BODY === */
+    .cmd__body {
+      max-height: min(420px, 50vh);
+      overflow-y: auto;
+      padding: 8px;
+      scroll-behavior: smooth;
+    }
+
+    .cmd__body::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .cmd__body::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .cmd__body::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+    }
+
+    /* === GROUP === */
+    .cmd__group {
+      margin-bottom: 4px;
+    }
+
+    .cmd__group-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-subtle);
+      opacity: 0.5;
+      padding: 10px 12px 6px;
+      user-select: none;
+    }
+
+    .cmd__group-icon {
+      font-size: 12px;
+      color: var(--brand-cyan);
+      opacity: 0.8;
+    }
+
+    /* === RESULT ITEM === */
+    .cmd__result {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.15s ease;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+    }
+
+    .cmd__result:hover,
+    .cmd__result--active {
+      background: rgba(0, 229, 255, 0.06);
+    }
+
+    .cmd__result--active {
+      background: rgba(0, 229, 255, 0.1);
+    }
+
+    .cmd__result--active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 20%;
+      bottom: 20%;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: var(--brand-cyan);
+    }
+
+    [data-theme="light"] .cmd__result:hover,
+    [data-theme="light"] .cmd__result--active {
+      background: rgba(0, 184, 212, 0.06);
+    }
+
+    [data-theme="light"] .cmd__result--active {
+      background: rgba(0, 184, 212, 0.1);
+    }
+
+    .cmd__result-text {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .cmd__result-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-strong);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cmd__result--active .cmd__result-title {
+      color: var(--brand-cyan);
+    }
+
+    .cmd__result-desc {
+      font-size: 12px;
+      color: var(--color-text-subtle);
+      opacity: 0.6;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cmd__result-arrow {
+      flex-shrink: 0;
+      color: var(--color-text-subtle);
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    .cmd__result:hover .cmd__result-arrow,
+    .cmd__result--active .cmd__result-arrow {
+      opacity: 0.6;
+      transform: translateX(0);
+    }
+
+    /* === HIGHLIGHT === */
+    .cmd__mark {
+      background: rgba(0, 229, 255, 0.2);
+      color: var(--brand-cyan);
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+
+    [data-theme="light"] .cmd__mark {
+      background: rgba(0, 184, 212, 0.15);
+      color: var(--brand-cyan-dim);
+    }
+
+    /* === EMPTY STATE === */
+    .cmd__empty {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .cmd__empty-icon {
+      font-size: 32px;
+      color: var(--color-text-subtle);
+      opacity: 0.3;
+      margin-bottom: 12px;
+    }
+
+    .cmd__empty-text {
+      font-size: 14px;
+      color: var(--color-text-subtle);
+      margin-bottom: 4px;
+    }
+
+    .cmd__empty-hint {
+      font-size: 12px;
+      color: var(--color-text-subtle);
+      opacity: 0.5;
+    }
+
+    /* === FOOTER === */
+    .cmd__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    [data-theme="light"] .cmd__footer {
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .cmd__hints {
+      display: flex;
+      gap: 16px;
+    }
+
+    .cmd__hint {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--color-text-subtle);
+      opacity: 0.4;
+    }
+
+    .cmd__hint kbd {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      line-height: 1.3;
+    }
+
+    [data-theme="light"] .cmd__hint kbd {
+      background: rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .cmd__brand {
+      font-family: var(--font-headings);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--brand-cyan);
+      opacity: 0.3;
+    }
+  }
+</style>

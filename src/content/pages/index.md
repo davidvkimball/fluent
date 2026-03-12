@@ -3,9 +3,14 @@ _schema: default
 title: Home
 description: "SIGNAL is a growth marketing agency that builds brands people actually remember. Strategy, design, and performance under one roof."
 pageSections:
-  - _component: page-sections/heroes/hero-center
+  - _component: page-sections/heroes/hero-animated
     eyebrow: GROWTH MARKETING AGENCY
-    heading: "Cut through the noise"
+    heading: "Cut through the"
+    rotatingWords:
+      - noise
+      - clutter
+      - guesswork
+      - average
     subtext: >-
       Most marketing is invisible. Forgettable campaigns, wasted ad spend,
       websites that look like everyone else's. SIGNAL exists because your brand
@@ -76,88 +81,106 @@ pageSections:
                 text: "Client retention rate year over year"
                 alignX: center
 
-  - _component: page-sections/features/feature-grid
+  - _component: page-sections/features/bento-grid
     eyebrow: WHAT WE DO
     heading: "Full-stack growth, no fluff"
     subtext: >-
       Strategy to execution. We do not hand you a PDF and wish you luck.
       Every engagement ships real work that drives real numbers.
-    features:
-      - _component: page-sections/features/feature-grid/feature-item
-        iconName: chart-bar
+    items:
+      - _component: page-sections/features/bento-grid/bento-item
         heading: Performance Marketing
         description: >-
           Paid search, paid social, programmatic. We manage seven-figure
           budgets and obsess over ROAS so you do not have to.
-      - _component: page-sections/features/feature-grid/feature-item
-        iconName: magnifying-glass
+        span: wide
+        accent: cyan
+        stat: "48x"
+        statLabel: BEST ROAS
+      - _component: page-sections/features/bento-grid/bento-item
         heading: SEO & Content
         description: >-
           Technical SEO audits, content strategy, link building. Organic
           traffic that compounds month over month.
-      - _component: page-sections/features/feature-grid/feature-item
-        iconName: paint-brush
+        accent: coral
+      - _component: page-sections/features/bento-grid/bento-item
         heading: Brand & Creative
         description: >-
           Visual identity, messaging frameworks, campaign creative. Brands
           people recognize before they read the logo.
-      - _component: page-sections/features/feature-grid/feature-item
-        iconName: code-bracket
+        imageSource: /src/assets/images/component-docs/sunset.jpg
+        imageAlt: Brand creative work
+        span: tall
+        accent: gradient
+      - _component: page-sections/features/bento-grid/bento-item
         heading: Web Development
         description: >-
           Fast, conversion-optimized websites built on modern stacks. No
           WordPress themes. No page builders. Clean code.
-      - _component: page-sections/features/feature-grid/feature-item
-        iconName: envelope
+        accent: cyan
+      - _component: page-sections/features/bento-grid/bento-item
         heading: Email & Lifecycle
         description: >-
           Automated flows, segmentation, deliverability. Turn one-time buyers
           into repeat customers without burning your list.
-      - _component: page-sections/features/feature-grid/feature-item
-        iconName: presentation-chart-line
+        stat: "97%"
+        statLabel: RETENTION
+        accent: coral
+      - _component: page-sections/features/bento-grid/bento-item
         heading: Analytics & CRO
         description: >-
           GA4 setups, conversion tracking, A/B testing. Decisions backed by
           data, not gut feelings and vanity metrics.
+        accent: cyan
     colorScheme: dark
     backgroundColor: base
     paddingVertical: 5xl
 
-  - _component: page-sections/features/feature-slider
-    colorScheme: dark
-    backgroundColor: surface
-    paddingVertical: 5xl
-    slides:
-      - _component: page-sections/features/feature-slider/feature-slider-item
-        eyebrow: CASE STUDY
-        title: "Meridian Outdoors: 340% revenue growth in 9 months"
+  - _component: page-sections/features/scroll-showcase
+    eyebrow: CASE STUDIES
+    heading: "Results that speak for themselves"
+    subtext: >-
+      We do not talk about what we could do. Here is what we have done.
+    items:
+      - _component: page-sections/features/scroll-showcase/showcase-item
+        eyebrow: CASE STUDY 01
+        heading: "Meridian Outdoors: 340% revenue growth in 9 months"
         description: >-
           Meridian came to us spending $40K/month on Meta ads with a 1.2x ROAS.
           We rebuilt their funnel from the ground up: new landing pages,
           restructured campaigns, lifecycle email flows. Nine months later they
           hit $2.1M in monthly revenue with a 4.8x blended ROAS.
+        stat: "340%"
+        statLabel: REVENUE GROWTH
         imageSource: /src/assets/images/component-docs/sunset.jpg
         imageAlt: Meridian Outdoors campaign
-      - _component: page-sections/features/feature-slider/feature-slider-item
-        eyebrow: CASE STUDY
-        title: "Vault Health: from 0 to 12K organic visitors/month"
+      - _component: page-sections/features/scroll-showcase/showcase-item
+        eyebrow: CASE STUDY 02
+        heading: "Vault Health: from 0 to 12K organic visitors/month"
         description: >-
           A telehealth startup with zero organic presence. We built their
           content engine from scratch. 180 pages of medically-reviewed content,
           a technical SEO overhaul, and strategic link building. They now rank
           for 2,400+ keywords.
+        stat: "12K"
+        statLabel: MONTHLY VISITORS
         imageSource: /src/assets/images/component-docs/castle.jpg
         imageAlt: Vault Health results
-      - _component: page-sections/features/feature-slider/feature-slider-item
-        eyebrow: CASE STUDY
-        title: "Basecamp Labs: 6-week website rebuild, 2x conversions"
+      - _component: page-sections/features/scroll-showcase/showcase-item
+        eyebrow: CASE STUDY 03
+        heading: "Basecamp Labs: 6-week website rebuild, 2x conversions"
         description: >-
           Their old WordPress site loaded in 8 seconds and converted at 0.4%.
           We rebuilt on Astro with CloudCannon CMS, launched in six weeks,
           and watched conversions double in the first month. The team updates
           content without developer tickets.
+        stat: "2x"
+        statLabel: CONVERSIONS
         imageSource: /src/assets/images/component-docs/dunedin-cliff.jpg
         imageAlt: Basecamp Labs website
+    colorScheme: dark
+    backgroundColor: surface
+    paddingVertical: 5xl
 
   - _component: page-sections/people/testimonial-section
     text: >-

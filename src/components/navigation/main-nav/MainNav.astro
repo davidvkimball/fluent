@@ -40,14 +40,21 @@ const mobileNavData = [
   {...htmlAttributes}
   useDefaultEditableBinding={false}
 >
-  <a href="/">
-    <Image
-      source={logoSource}
-      class="main-nav-logo"
-      alt={logoAlt}
-      useDefaultEditableBinding={false}
-    />
+  <a href="/" class="main-nav-logo-link" aria-label={logoAlt}>
+    <svg class="main-nav-logo-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 32" height="32" role="img" aria-hidden="true">
+      <svg x="0" y="4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.247 7.761a6 6 0 0 1 0 8.478"/><path d="M19.075 4.933a10 10 0 0 1 0 14.134"/><path d="M4.925 19.067a10 10 0 0 1 0-14.134"/><path d="M7.753 16.239a6 6 0 0 1 0-8.478"/><circle cx="12" cy="12" r="2"/></svg>
+      <text x="30" y="23" font-family="'Space Grotesk', system-ui, sans-serif" font-size="20" font-weight="700" fill="#fafafa" letter-spacing="-0.03em">SIGNAL</text>
+    </svg>
   </a>
+  <button class="cmd-trigger" data-cmd-trigger type="button" aria-label="Search (Ctrl+K)">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.3-4.3"></path>
+    </svg>
+    <span class="cmd-trigger__text">Search</span>
+    <kbd class="cmd-trigger__kbd">Ctrl K</kbd>
+  </button>
+
   <div class="nav-end">
     <Bar
       navData={navData}
@@ -90,8 +97,15 @@ const mobileNavData = [
         }
       }
 
-      .main-nav-logo {
-        margin-top: 0 !important;
+      .main-nav-logo-link {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+      }
+
+      .main-nav-logo-img {
+        height: 1.8em;
+        width: auto;
       }
 
       .nav-hamburger.mobile-button {
@@ -107,7 +121,7 @@ const mobileNavData = [
         flex-wrap: wrap;
         gap: var(--spacing-md);
 
-        > a > .image img {
+        > a > img {
           height: 1.8em;
           max-width: min(20em, 100%);
           width: auto;
@@ -127,6 +141,63 @@ const mobileNavData = [
 
         > .button-group {
           container-type: normal;
+        }
+      }
+
+      .cmd-trigger {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--color-border);
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--color-text-subtle);
+        cursor: pointer;
+        font-family: var(--font-body);
+        font-size: 13px;
+        transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+        white-space: nowrap;
+      }
+
+      .cmd-trigger:hover {
+        border-color: var(--brand-cyan);
+        color: var(--color-text-strong);
+        background: rgba(0, 229, 255, 0.04);
+      }
+
+      .cmd-trigger__text {
+        opacity: 0.7;
+      }
+
+      .cmd-trigger__kbd {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        padding: 2px 5px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        opacity: 0.5;
+        line-height: 1;
+      }
+
+      [data-theme="light"] .cmd-trigger {
+        background: rgba(0, 0, 0, 0.02);
+      }
+
+      [data-theme="light"] .cmd-trigger__kbd {
+        background: rgba(0, 0, 0, 0.04);
+        border-color: rgba(0, 0, 0, 0.1);
+      }
+
+      @container (max-width: 768px) {
+        .cmd-trigger__text,
+        .cmd-trigger__kbd {
+          display: none;
+        }
+
+        .cmd-trigger {
+          padding: 6px;
         }
       }
 

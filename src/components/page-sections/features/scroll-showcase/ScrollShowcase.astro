@@ -1,0 +1,348 @@
+---
+import CustomSection from "@builders/custom-section/CustomSection.astro";
+import Heading from "@core-elements/heading/Heading.astro";
+import Text from "@core-elements/text/Text.astro";
+import SimpleText from "@core-elements/simple-text/SimpleText.astro";
+import Image from "@core-elements/image/Image.astro";
+
+interface ShowcaseItem {
+  eyebrow?: string;
+  heading?: string;
+  description?: string;
+  imageSource?: string;
+  imageAlt?: string;
+  stat?: string;
+  statLabel?: string;
+  _component?: string;
+}
+
+const {
+  eyebrow = "",
+  heading = "",
+  subtext = "",
+  items = [] as ShowcaseItem[],
+  colorScheme = "inherit",
+  backgroundColor,
+  paddingVertical = "5xl",
+  class: className,
+  useDefaultEditableBinding = false,
+  _component,
+  ...htmlAttributes
+} = Astro.props;
+---
+
+<CustomSection
+  class:list={["scroll-showcase", className]}
+  maxContentWidth="2xl"
+  paddingHorizontal="lg"
+  paddingVertical={paddingVertical}
+  colorScheme={colorScheme}
+  backgroundColor={backgroundColor}
+  useDefaultEditableBinding={useDefaultEditableBinding}
+  {...htmlAttributes}
+>
+  <div class="scroll-showcase__header">
+    <SimpleText
+      class="eyebrow"
+      data-prop="eyebrow"
+      text={eyebrow}
+      alignX="center"
+    />
+    <Heading
+      class="scroll-showcase__heading"
+      level="h2"
+      text={heading}
+      alignX="center"
+      data-prop="heading"
+    />
+    <Text
+      class="scroll-showcase__subtext"
+      alignX="center"
+      data-prop="subtext"
+      text={subtext}
+    />
+  </div>
+
+  <div class="scroll-showcase__track" data-children-prop="items">
+    {items.map((item: ShowcaseItem, i: number) => (
+      <div class="scroll-showcase__panel" data-panel-index={i}>
+        <div class="scroll-showcase__panel-content">
+          {item.eyebrow && (
+            <span class="scroll-showcase__panel-eyebrow" data-prop="eyebrow">{item.eyebrow}</span>
+          )}
+          {item.stat && (
+            <div class="scroll-showcase__panel-stat">
+              <span class="scroll-showcase__panel-stat-number" data-prop="stat">{item.stat}</span>
+              {item.statLabel && <span class="scroll-showcase__panel-stat-label" data-prop="statLabel">{item.statLabel}</span>}
+            </div>
+          )}
+          <h3 class="scroll-showcase__panel-heading" data-prop="heading">{item.heading}</h3>
+          <p class="scroll-showcase__panel-desc" data-prop="description">{item.description}</p>
+          <div class="scroll-showcase__panel-line" aria-hidden="true"></div>
+        </div>
+        {item.imageSource && (
+          <div class="scroll-showcase__panel-image">
+            <Image
+              source={item.imageSource}
+              alt={item.imageAlt || ""}
+              class="scroll-showcase__image"
+            />
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+
+  <div class="scroll-showcase__progress" aria-hidden="true">
+    <div class="scroll-showcase__progress-bar"></div>
+  </div>
+</CustomSection>
+
+<script>
+  import { onPageLoad } from "@component-utils/onPageLoad";
+
+  function initScrollShowcase() {
+    const showcases = document.querySelectorAll('.scroll-showcase__track');
+
+    showcases.forEach((track) => {
+      const panels = track.querySelectorAll('.scroll-showcase__panel');
+      const progressBar = track.parentElement?.querySelector('.scroll-showcase__progress-bar') as HTMLElement | null;
+      if (!panels.length) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('scroll-showcase__panel--visible');
+            }
+          });
+        },
+        { threshold: 0.2, rootMargin: '0px 0px -60px 0px' }
+      );
+
+      panels.forEach((panel) => observer.observe(panel));
+
+      // Progress bar on scroll
+      if (progressBar) {
+        const section = track.closest('.scroll-showcase');
+        if (section) {
+          const updateProgress = () => {
+            const rect = section.getBoundingClientRect();
+            const sectionHeight = rect.height;
+            const scrolled = -rect.top;
+            const progress = Math.max(0, Math.min(1, scrolled / (sectionHeight - window.innerHeight)));
+            progressBar.style.transform = `scaleX(${progress})`;
+          };
+          window.addEventListener('scroll', updateProgress, { passive: true });
+          updateProgress();
+        }
+      }
+    });
+  }
+
+  onPageLoad(initScrollShowcase);
+</script>
+
+<style>
+  @layer page-sections {
+    :global(.scroll-showcase__heading) {
+      margin-top: var(--spacing-lg);
+    }
+
+    :global(.scroll-showcase__subtext) {
+      max-width: 640px;
+      margin-inline: auto;
+      font-size: var(--font-size-lg);
+    }
+
+    .scroll-showcase__header {
+      margin-bottom: var(--spacing-4xl);
+    }
+
+    /* === PROGRESS BAR === */
+    .scroll-showcase__progress {
+      position: relative;
+      height: 2px;
+      background: var(--color-border);
+      border-radius: 1px;
+      overflow: hidden;
+      margin-top: var(--spacing-3xl);
+    }
+
+    .scroll-showcase__progress-bar {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, var(--brand-cyan), var(--brand-coral));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.1s linear;
+    }
+
+    /* === PANEL LAYOUT === */
+    .scroll-showcase__track {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-4xl);
+    }
+
+    .scroll-showcase__panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-2xl);
+      align-items: center;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .scroll-showcase__panel--visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Alternate layout direction */
+    .scroll-showcase__panel:nth-child(even) {
+      direction: rtl;
+    }
+
+    .scroll-showcase__panel:nth-child(even) > * {
+      direction: ltr;
+    }
+
+    @media (max-width: 768px) {
+      .scroll-showcase__panel {
+        grid-template-columns: 1fr;
+      }
+
+      .scroll-showcase__panel:nth-child(even) {
+        direction: ltr;
+      }
+    }
+
+    /* === PANEL CONTENT === */
+    .scroll-showcase__panel-content {
+      position: relative;
+    }
+
+    .scroll-showcase__panel-eyebrow {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: var(--font-size-xs);
+      letter-spacing: 0.15em;
+      color: var(--brand-cyan);
+      text-transform: uppercase;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    [data-theme="light"] .scroll-showcase__panel-eyebrow {
+      color: var(--brand-cyan-dim);
+    }
+
+    .scroll-showcase__panel-heading {
+      font-family: var(--font-headings);
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: var(--color-text-strong);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .scroll-showcase__panel-desc {
+      font-size: var(--font-size-md);
+      color: var(--color-text-subtle);
+      line-height: 1.7;
+      max-width: 480px;
+    }
+
+    /* Stat display */
+    .scroll-showcase__panel-stat {
+      display: flex;
+      align-items: baseline;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .scroll-showcase__panel-stat-number {
+      font-family: var(--font-headings);
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--brand-cyan) 0%, #00b8d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .scroll-showcase__panel-stat-label {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-subtle);
+      font-family: var(--font-mono);
+      letter-spacing: 0.05em;
+    }
+
+    /* Decorative line */
+    .scroll-showcase__panel-line {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--brand-cyan), transparent);
+      margin-top: var(--spacing-lg);
+      opacity: 0;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: opacity 0.6s ease 0.3s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+    }
+
+    .scroll-showcase__panel--visible .scroll-showcase__panel-line {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+
+    /* === PANEL IMAGE === */
+    .scroll-showcase__panel-image {
+      position: relative;
+      border-radius: var(--radius-lg, 12px);
+      overflow: hidden;
+    }
+
+    .scroll-showcase__panel-image :global(.image) {
+      margin-top: 0 !important;
+    }
+
+    .scroll-showcase__panel-image :global(img) {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: var(--radius-lg, 12px);
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .scroll-showcase__panel:hover .scroll-showcase__panel-image :global(img) {
+      transform: scale(1.03);
+    }
+
+    /* Gradient overlay on images */
+    .scroll-showcase__panel-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-lg, 12px);
+      border: 1px solid rgba(0, 229, 255, 0.1);
+      pointer-events: none;
+      transition: border-color 0.4s ease;
+    }
+
+    .scroll-showcase__panel:hover .scroll-showcase__panel-image::after {
+      border-color: rgba(0, 229, 255, 0.25);
+    }
+
+    [data-theme="light"] .scroll-showcase__panel-image::after {
+      border-color: rgba(0, 184, 212, 0.08);
+    }
+
+    [data-theme="light"] .scroll-showcase__panel:hover .scroll-showcase__panel-image::after {
+      border-color: rgba(0, 184, 212, 0.2);
+    }
+  }
+</style>

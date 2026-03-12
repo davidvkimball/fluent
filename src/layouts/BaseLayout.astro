@@ -1,4 +1,5 @@
 ---
+import CommandPalette from "@components/CommandPalette.astro";
 import StructuredData from "@components/utils/StructuredData.astro";
 import seoData from "@data/seo.json";
 import "@styles/style.css";
@@ -95,6 +96,7 @@ const pageImage = props.image || seoData.logoSource;
     <slot name="head" />
   </head>
   <body>
+    <CommandPalette />
     <div>
       <slot />
     </div>
@@ -116,7 +118,7 @@ const pageImage = props.image || seoData.logoSource;
         { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
       );
 
-      document.querySelectorAll(".custom-section").forEach((el) => {
+      document.querySelectorAll(".custom-section:not(.main-nav)").forEach((el) => {
         el.classList.add("fluent-animate");
         observer.observe(el);
       });

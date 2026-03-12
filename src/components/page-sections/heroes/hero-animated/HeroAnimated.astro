@@ -1,0 +1,320 @@
+---
+import CustomSection from "@builders/custom-section/CustomSection.astro";
+import Heading from "@core-elements/heading/Heading.astro";
+import Text from "@core-elements/text/Text.astro";
+import SimpleText from "@core-elements/simple-text/SimpleText.astro";
+import ButtonGroup from "@wrappers/button-group/ButtonGroup.astro";
+
+const {
+  eyebrow = "",
+  heading = "",
+  subtext = "",
+  rotatingWords = [],
+  buttonSections = [],
+  colorScheme = "inherit",
+  backgroundColor,
+  paddingVertical = "6xl",
+  class: className,
+  useDefaultEditableBinding = false,
+  _component,
+  ...htmlAttributes
+} = Astro.props;
+
+const wordsJson = JSON.stringify(rotatingWords);
+---
+
+<CustomSection
+  class:list={["hero-animated", className]}
+  maxContentWidth="2xl"
+  paddingHorizontal="lg"
+  paddingVertical={paddingVertical}
+  colorScheme={colorScheme}
+  backgroundColor={backgroundColor}
+  useDefaultEditableBinding={useDefaultEditableBinding}
+  {...htmlAttributes}
+>
+  <!-- Animated background elements -->
+  <div class="hero-animated__bg" aria-hidden="true">
+    <div class="hero-animated__orb hero-animated__orb--1"></div>
+    <div class="hero-animated__orb hero-animated__orb--2"></div>
+    <div class="hero-animated__orb hero-animated__orb--3"></div>
+    <div class="hero-animated__grid"></div>
+    <div class="hero-animated__scanline"></div>
+  </div>
+
+  <div class="hero-animated__content">
+    <SimpleText
+      class="eyebrow"
+      data-prop="eyebrow"
+      text={eyebrow}
+      alignX="center"
+    />
+
+    <h1 class="hero-animated__heading">
+      <span class="hero-animated__heading-text" data-prop="heading">{heading}</span>
+      {rotatingWords.length > 0 && (
+        <span class="hero-animated__rotating-wrap">
+          <span class="hero-animated__rotating" data-words={wordsJson}>
+            {rotatingWords[0]}
+          </span>
+          <span class="hero-animated__cursor"></span>
+        </span>
+      )}
+    </h1>
+
+    <Text
+      class="hero-animated__subtext"
+      alignX="center"
+      data-prop="subtext"
+      text={subtext}
+    />
+
+    <ButtonGroup
+      class="hero-animated__buttons"
+      buttonSections={buttonSections}
+      direction="row"
+      alignX="center"
+      data-children-prop="buttonSections"
+    />
+  </div>
+</CustomSection>
+
+<script>
+  import { onPageLoad } from "@component-utils/onPageLoad";
+
+  function initRotatingWords() {
+    const els = document.querySelectorAll('.hero-animated__rotating');
+    els.forEach((el) => {
+      const htmlEl = el as HTMLElement;
+      if (htmlEl.dataset.initialized) return;
+      htmlEl.dataset.initialized = 'true';
+
+      const words: string[] = JSON.parse(htmlEl.dataset.words || '[]');
+      if (words.length < 2) return;
+
+      let index = 0;
+
+      setInterval(() => {
+        htmlEl.classList.add('hero-animated__rotating--out');
+
+        setTimeout(() => {
+          index = (index + 1) % words.length;
+          htmlEl.textContent = words[index];
+          htmlEl.classList.remove('hero-animated__rotating--out');
+          htmlEl.classList.add('hero-animated__rotating--in');
+
+          setTimeout(() => {
+            htmlEl.classList.remove('hero-animated__rotating--in');
+          }, 400);
+        }, 400);
+      }, 3000);
+    });
+  }
+
+  onPageLoad(initRotatingWords);
+</script>
+
+<style>
+  @layer page-sections {
+    :global(.hero-animated) {
+      position: relative;
+      overflow: hidden;
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+    }
+
+    :global(.hero-animated) > :global(.outer-content) {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+    }
+
+    /* === BACKGROUND EFFECTS === */
+    .hero-animated__bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Floating orbs */
+    .hero-animated__orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.5;
+    }
+
+    .hero-animated__orb--1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(0, 229, 255, 0.2), transparent 70%);
+      top: -10%;
+      left: -5%;
+      animation: orb-float-1 16s ease-in-out infinite;
+    }
+
+    .hero-animated__orb--2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255, 107, 107, 0.15), transparent 70%);
+      bottom: -15%;
+      right: -5%;
+      animation: orb-float-2 20s ease-in-out infinite;
+    }
+
+    .hero-animated__orb--3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(0, 229, 255, 0.1), transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: orb-float-3 14s ease-in-out infinite;
+    }
+
+    [data-theme="light"] .hero-animated__orb--1 {
+      background: radial-gradient(circle, rgba(0, 229, 255, 0.1), transparent 70%);
+    }
+    [data-theme="light"] .hero-animated__orb--2 {
+      background: radial-gradient(circle, rgba(255, 107, 107, 0.08), transparent 70%);
+    }
+    [data-theme="light"] .hero-animated__orb--3 {
+      background: radial-gradient(circle, rgba(0, 229, 255, 0.05), transparent 70%);
+    }
+
+    /* Perspective grid floor */
+    .hero-animated__grid {
+      position: absolute;
+      bottom: 0;
+      left: -20%;
+      right: -20%;
+      height: 50%;
+      background:
+        linear-gradient(rgba(0, 229, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 255, 0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      transform: perspective(500px) rotateX(60deg);
+      transform-origin: center bottom;
+      mask-image: linear-gradient(to top, rgba(0,0,0,0.4), transparent 80%);
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.4), transparent 80%);
+    }
+
+    [data-theme="light"] .hero-animated__grid {
+      background:
+        linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* Horizontal scanline */
+    .hero-animated__scanline {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 10%, rgba(0, 229, 255, 0.3) 50%, transparent 90%);
+      animation: scanline-sweep 5s linear infinite;
+    }
+
+    @keyframes scanline-sweep {
+      0% { top: 0; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    @keyframes orb-float-1 {
+      0%, 100% { transform: translate(0, 0); }
+      33% { transform: translate(40px, 30px); }
+      66% { transform: translate(-20px, -15px); }
+    }
+
+    @keyframes orb-float-2 {
+      0%, 100% { transform: translate(0, 0); }
+      33% { transform: translate(-30px, -25px); }
+      66% { transform: translate(25px, 20px); }
+    }
+
+    @keyframes orb-float-3 {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.3); }
+    }
+
+    /* === CONTENT === */
+    .hero-animated__content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .hero-animated__heading {
+      font-family: var(--font-headings);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      color: var(--color-text-strong);
+      margin-top: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .hero-animated__heading-text {
+      display: block;
+    }
+
+    /* Rotating word */
+    .hero-animated__rotating-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .hero-animated__rotating {
+      display: inline-block;
+      color: var(--brand-cyan);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      min-width: 3ch;
+    }
+
+    .hero-animated__rotating--out {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+
+    .hero-animated__rotating--in {
+      animation: word-in 0.4s ease forwards;
+    }
+
+    @keyframes word-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-animated__cursor {
+      display: inline-block;
+      width: 3px;
+      height: 1em;
+      background: var(--brand-cyan);
+      margin-left: 2px;
+      animation: blink 1s steps(1) infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    :global(.hero-animated__subtext) {
+      max-width: 640px;
+      margin-inline: auto;
+      font-size: var(--font-size-lg);
+    }
+
+    :global(.hero-animated__buttons) {
+      margin-top: var(--spacing-xl);
+    }
+  }
+</style>
