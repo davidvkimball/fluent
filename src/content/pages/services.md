@@ -135,7 +135,18 @@ pageSections:
     backgroundColor: surface
     paddingVertical: 5xl
 
-  - _component: page-sections/ctas/cta-center
+  - _component: page-sections/people/testimonial-section
+    text: >-
+      They rebuilt our entire web presence in six weeks. The site loads in
+      under a second, conversions doubled, and our team can actually
+      update it without filing a ticket.
+    authorName: Maria Okafor
+    authorDescription: Head of Growth, Basecamp Labs
+    colorScheme: dark
+    backgroundColor: surface
+    paddingVertical: 4xl
+
+  - _component: page-sections/ctas/cta-split
     heading: "Let's figure out what moves your numbers"
     subtext: >-
       Every engagement starts with a conversation, not a contract. Tell us
@@ -146,6 +157,8 @@ pageSections:
         link: /contact/
         variant: primary
         size: lg
+    imageSource: /src/assets/images/component-docs/sunset.jpg
+    imageAlt: Working together
     colorScheme: dark
     backgroundColor: base
     paddingVertical: 6xl

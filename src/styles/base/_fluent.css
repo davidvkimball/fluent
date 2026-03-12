@@ -1,8 +1,10 @@
-/* SIGNAL — Custom visual effects and brand styling */
+/* SIGNAL — Distinctive brand styling */
 
 @layer base {
 
-  /* Animated gradient mesh for hero */
+  /* ============================================
+     ANIMATED HERO MESH GRADIENT
+     ============================================ */
   .hero-center,
   .hero {
     position: relative;
@@ -13,11 +15,12 @@
   .hero::before {
     content: "";
     position: absolute;
-    inset: -60%;
+    inset: -80%;
     background:
-      radial-gradient(ellipse at 30% 40%, rgba(0, 229, 255, 0.12) 0%, transparent 55%),
-      radial-gradient(ellipse at 70% 60%, rgba(255, 107, 107, 0.08) 0%, transparent 55%);
-    animation: signal-drift 18s ease-in-out infinite alternate;
+      radial-gradient(ellipse at 20% 30%, rgba(0, 229, 255, 0.18) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(255, 107, 107, 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(0, 229, 255, 0.05) 0%, transparent 70%);
+    animation: signal-drift 20s ease-in-out infinite alternate;
     pointer-events: none;
     z-index: 0;
   }
@@ -25,21 +28,43 @@
   [data-theme="light"] .hero-center::before,
   [data-theme="light"] .hero::before {
     background:
-      radial-gradient(ellipse at 30% 40%, rgba(0, 229, 255, 0.06) 0%, transparent 55%),
-      radial-gradient(ellipse at 70% 60%, rgba(255, 107, 107, 0.04) 0%, transparent 55%);
+      radial-gradient(ellipse at 20% 30%, rgba(0, 229, 255, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(255, 107, 107, 0.05) 0%, transparent 50%);
+  }
+
+  /* Animated scanline sweep on hero */
+  .hero-center::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.2), transparent);
+    animation: signal-scanline 6s linear infinite;
+    pointer-events: none;
+    z-index: 1;
   }
 
   @keyframes signal-drift {
     0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-    50% { transform: translate(5%, -4%) rotate(1.5deg) scale(1.05); }
-    100% { transform: translate(-3%, 3%) rotate(-1deg) scale(0.97); }
+    33% { transform: translate(4%, -5%) rotate(2deg) scale(1.06); }
+    66% { transform: translate(-5%, 3%) rotate(-1.5deg) scale(0.96); }
+    100% { transform: translate(2%, -2%) rotate(0.5deg) scale(1.02); }
   }
 
-  /* Scroll-triggered section animation */
+  @keyframes signal-scanline {
+    0% { top: -2px; }
+    100% { top: 100%; }
+  }
+
+
+  /* ============================================
+     SCROLL REVEAL ANIMATIONS
+     ============================================ */
   .fluent-animate {
     opacity: 0;
-    transform: translateY(36px);
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(40px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .fluent-animate.fluent-visible {
@@ -47,80 +72,16 @@
     transform: translateY(0);
   }
 
-  /* Cyan glow text */
-  .signal-glow {
-    color: var(--brand-cyan);
-    text-shadow: 0 0 40px rgba(0, 229, 255, 0.3), 0 0 80px rgba(0, 229, 255, 0.1);
-  }
 
-  [data-theme="light"] .signal-glow {
-    color: var(--brand-cyan-dim);
-    text-shadow: none;
-  }
+  /* ============================================
+     TYPOGRAPHY
+     ============================================ */
+  h1 { letter-spacing: -0.04em; }
+  h2 { letter-spacing: -0.03em; }
+  h3 { letter-spacing: -0.02em; }
 
-  /* Coral accent text */
-  .signal-coral {
-    color: var(--brand-coral);
-  }
+  html { scroll-behavior: smooth; }
 
-  /* Gradient text: cyan to coral */
-  .signal-gradient-text {
-    background: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-coral) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  /* Glassmorphism */
-  .signal-glass {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-  }
-
-  [data-theme="light"] .signal-glass {
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-  }
-
-  /* Neon border glow on hover */
-  .signal-border-glow {
-    position: relative;
-    transition: box-shadow 0.4s ease;
-  }
-
-  .signal-border-glow:hover {
-    box-shadow: 0 0 0 1px var(--brand-cyan), 0 0 30px rgba(0, 229, 255, 0.1);
-  }
-
-  /* Grid dot pattern */
-  .signal-dots {
-    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-
-  [data-theme="light"] .signal-dots {
-    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
-  }
-
-  /* Subtle noise grain */
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    opacity: 0.015;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 9999;
-  }
-
-  /* Smooth scroll */
-  html {
-    scroll-behavior: smooth;
-  }
-
-  /* Selection */
   ::selection {
     background: rgba(0, 229, 255, 0.25);
     color: inherit;
@@ -130,12 +91,24 @@
     background: rgba(0, 184, 212, 0.2);
   }
 
-  /* Tighter heading tracking */
-  h1 { letter-spacing: -0.035em; }
-  h2 { letter-spacing: -0.025em; }
-  h3 { letter-spacing: -0.02em; }
 
-  /* Animated underline links */
+  /* ============================================
+     NOISE GRAIN OVERLAY
+     ============================================ */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    opacity: 0.018;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+
+  /* ============================================
+     ANIMATED UNDERLINE LINKS
+     ============================================ */
   main a:not(.button-inner):not(.card-inner):not([class]) {
     text-decoration: none;
     background-image: linear-gradient(var(--brand-cyan), var(--brand-cyan));
@@ -149,12 +122,346 @@
     background-size: 100% 1px;
   }
 
-  /* Counter / stat glow */
+  /* Gradient horizontal rules */
+  hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-border), transparent);
+  }
+
+
+  /* ============================================
+     EYEBROW & BRAND ACCENT COLORS
+     ============================================ */
+  .eyebrow {
+    color: var(--brand-cyan) !important;
+    font-family: var(--font-mono) !important;
+    font-size: var(--font-size-xs) !important;
+    letter-spacing: 0.15em !important;
+  }
+
+  [data-theme="light"] .eyebrow {
+    color: var(--brand-cyan-dim) !important;
+  }
+
   .counter {
     color: var(--brand-cyan) !important;
   }
 
-  /* Pulsing dot */
+
+  /* ============================================
+     FEATURE GRID CARDS — Bold left accent border
+     ============================================ */
+  .feature-grid-item .card-inner.border {
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--brand-cyan);
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.02) 0%, transparent 60%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+  }
+
+  .feature-grid-item .card-inner.border:hover {
+    border-left-color: var(--brand-coral);
+    transform: translateY(-6px);
+    box-shadow:
+      0 0 0 1px rgba(0, 229, 255, 0.08),
+      0 20px 60px -10px rgba(0, 0, 0, 0.3);
+  }
+
+  [data-theme="light"] .feature-grid-item .card-inner.border {
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.03) 0%, transparent 60%);
+  }
+
+  [data-theme="light"] .feature-grid-item .card-inner.border:hover {
+    box-shadow:
+      0 0 0 1px rgba(0, 184, 212, 0.1),
+      0 20px 60px -10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Icon styling */
+  .feature-grid-item .icon {
+    color: var(--brand-cyan);
+  }
+
+  .icon .icon-bg {
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(0, 229, 255, 0.04)) !important;
+    border: 1px solid rgba(0, 229, 255, 0.12);
+  }
+
+  [data-theme="light"] .icon .icon-bg {
+    background: linear-gradient(135deg, rgba(0, 184, 212, 0.08), rgba(0, 184, 212, 0.02)) !important;
+    border: 1px solid rgba(0, 184, 212, 0.1);
+  }
+
+  /* Staggered grid item animations */
+  .feature-grid-item:nth-child(1) { transition-delay: 0s; }
+  .feature-grid-item:nth-child(2) { transition-delay: 0.06s; }
+  .feature-grid-item:nth-child(3) { transition-delay: 0.12s; }
+  .feature-grid-item:nth-child(4) { transition-delay: 0.18s; }
+  .feature-grid-item:nth-child(5) { transition-delay: 0.24s; }
+  .feature-grid-item:nth-child(6) { transition-delay: 0.3s; }
+
+
+  /* ============================================
+     PRIMARY BUTTONS — Gradient + glow
+     ============================================ */
+  .button-inner.variant-primary {
+    background: linear-gradient(135deg, var(--brand-cyan) 0%, #00b8d4 100%) !important;
+    border: none !important;
+    box-shadow:
+      0 0 20px rgba(0, 229, 255, 0.15),
+      0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease, transform 0.2s ease !important;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .button-inner.variant-primary::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .button-inner.variant-primary:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 0 30px rgba(0, 229, 255, 0.3),
+      0 8px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  .button-inner.variant-primary:hover::before {
+    opacity: 1;
+  }
+
+  [data-theme="light"] .button-inner.variant-primary {
+    box-shadow: 0 2px 12px rgba(0, 184, 212, 0.25);
+  }
+
+  [data-theme="light"] .button-inner.variant-primary:hover {
+    box-shadow: 0 6px 20px rgba(0, 184, 212, 0.35) !important;
+  }
+
+  /* Tertiary buttons: cyan border accent on hover */
+  .button-inner.variant-tertiary:hover {
+    border-color: var(--brand-cyan) !important;
+    color: var(--brand-cyan) !important;
+    background: rgba(0, 229, 255, 0.04) !important;
+  }
+
+  /* Ghost buttons */
+  .button-inner.variant-ghost:hover {
+    color: var(--brand-cyan) !important;
+  }
+
+
+  /* ============================================
+     FEATURE SPLIT — Image border decoration
+     ============================================ */
+  .feature-split .image {
+    position: relative;
+  }
+
+  .feature-split .image::after {
+    content: "";
+    position: absolute;
+    inset: 10px -10px -10px 10px;
+    border: 2px solid var(--brand-cyan);
+    border-radius: var(--radius-md);
+    opacity: 0.12;
+    z-index: -1;
+    transition: opacity 0.4s ease, inset 0.4s ease;
+  }
+
+  .feature-split:hover .image::after {
+    opacity: 0.25;
+    inset: 6px -6px -6px 6px;
+  }
+
+  [data-theme="light"] .feature-split .image::after {
+    border-color: var(--brand-cyan-dim);
+    opacity: 0.08;
+  }
+
+
+  /* ============================================
+     TESTIMONIALS — Decorative quote mark
+     ============================================ */
+  .testimonial-section {
+    position: relative;
+  }
+
+  .testimonial-section::after {
+    content: "\201C";
+    position: absolute;
+    top: 0.3em;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10rem;
+    line-height: 1;
+    color: var(--brand-cyan);
+    opacity: 0.04;
+    font-family: Georgia, serif;
+    pointer-events: none;
+  }
+
+
+  /* ============================================
+     DOT GRID ON SURFACE SECTIONS
+     ============================================ */
+  .custom-section > .outer-content > .background > .bg-surface {
+    background-image:
+      radial-gradient(circle, rgba(0, 229, 255, 0.025) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  [data-theme="light"] .custom-section > .outer-content > .background > .bg-surface {
+    background-image:
+      radial-gradient(circle, rgba(0, 0, 0, 0.025) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+
+  /* ============================================
+     CTA SECTIONS — Gradient top border
+     ============================================ */
+  .cta-center,
+  .cta-form,
+  .cta-split {
+    position: relative;
+  }
+
+  .cta-center::before,
+  .cta-form::before,
+  .cta-split::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--brand-cyan), var(--brand-coral), transparent);
+    opacity: 0.35;
+  }
+
+
+  /* ============================================
+     FOOTER — Gradient top border
+     ============================================ */
+  .footer-section {
+    border-top: 1px solid transparent;
+    border-image: linear-gradient(90deg, transparent 5%, var(--brand-cyan) 30%, var(--brand-coral) 70%, transparent 95%) 1;
+  }
+
+
+  /* ============================================
+     NAVIGATION — Brand hover colors
+     ============================================ */
+  .bar-link:hover,
+  .bar-link.active {
+    color: var(--brand-cyan) !important;
+  }
+
+
+  /* ============================================
+     FAQ — Cyan accent on open items
+     ============================================ */
+  .accordion-item[open] summary {
+    color: var(--brand-cyan);
+  }
+
+
+  /* ============================================
+     FEATURE SLIDER — Custom carousel styling
+     ============================================ */
+  .feature-slider .card-inner {
+    background: linear-gradient(
+      135deg,
+      rgba(0, 229, 255, 0.03) 0%,
+      transparent 40%,
+      rgba(255, 107, 107, 0.02) 100%
+    );
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  [data-theme="light"] .feature-slider .card-inner {
+    background: linear-gradient(
+      135deg,
+      rgba(0, 184, 212, 0.03) 0%,
+      transparent 40%,
+      rgba(255, 107, 107, 0.02) 100%
+    );
+  }
+
+
+  /* ============================================
+     COUNTER SECTION — Enhanced stat styling
+     ============================================ */
+  .counter .counter-inner {
+    text-shadow: 0 0 40px rgba(0, 229, 255, 0.2);
+  }
+
+  [data-theme="light"] .counter .counter-inner {
+    text-shadow: none;
+  }
+
+  .counter .prefix,
+  .counter .suffix {
+    color: var(--brand-cyan) !important;
+    opacity: 0.7;
+  }
+
+
+  /* ============================================
+     TEAM GRID — Hover effects
+     ============================================ */
+  .team-item .card-inner {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .team-item .card-inner:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+
+
+  /* ============================================
+     BLOG CARDS — Cyan top accent on hover
+     ============================================ */
+  .blog-card .card-inner {
+    border-top: 2px solid transparent;
+    transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .blog-card .card-inner:hover {
+    border-top-color: var(--brand-cyan);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+
+
+  /* ============================================
+     UTILITY CLASSES
+     ============================================ */
+  .signal-glow {
+    color: var(--brand-cyan);
+    text-shadow: 0 0 40px rgba(0, 229, 255, 0.3), 0 0 80px rgba(0, 229, 255, 0.1);
+  }
+
+  [data-theme="light"] .signal-glow {
+    color: var(--brand-cyan-dim);
+    text-shadow: none;
+  }
+
+  .signal-gradient-text {
+    background: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-coral) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
   @keyframes signal-pulse {
     0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4); }
     50% { opacity: 0.8; box-shadow: 0 0 0 8px rgba(0, 229, 255, 0); }
@@ -168,220 +475,4 @@
     animation: signal-pulse 2s ease-in-out infinite;
     display: inline-block;
   }
-
-  /* Horizontal rule with gradient */
-  hr {
-    border: none;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--color-border), transparent);
-  }
-
-  /* Feature card icon color override */
-  .feature-grid-item .icon {
-    color: var(--brand-cyan);
-  }
-
-  /* Eyebrow with cyan accent */
-  .eyebrow {
-    color: var(--brand-cyan) !important;
-  }
-
-  [data-theme="light"] .eyebrow {
-    color: var(--brand-cyan-dim) !important;
-  }
-
-  /* CTA sections get a subtle top gradient border */
-  .cta-center::before,
-  .cta-form::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 10%;
-    right: 10%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--brand-cyan), var(--brand-coral), transparent);
-    opacity: 0.4;
-  }
-
-  /* ============================================
-     SIGNAL — Visual differentiation overrides
-     ============================================ */
-
-  /* Feature grid cards: cyan left border accent + subtle glow on hover */
-  .feature-grid-item .card-inner.border {
-    border-left: 3px solid var(--brand-cyan);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-  }
-
-  .feature-grid-item .card-inner.border:hover {
-    border-left-color: var(--brand-coral);
-    box-shadow:
-      0 0 0 1px rgba(0, 229, 255, 0.06),
-      0 12px 40px rgba(0, 0, 0, 0.2);
-    transform: translateY(-4px);
-  }
-
-  [data-theme="light"] .feature-grid-item .card-inner.border:hover {
-    box-shadow:
-      0 0 0 1px rgba(0, 184, 212, 0.08),
-      0 12px 40px rgba(0, 0, 0, 0.08);
-  }
-
-  /* Primary button: gradient background + glow */
-  .button-inner.variant-primary {
-    background: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-cyan-dim) 100%) !important;
-    border: none !important;
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
-    transition: box-shadow 0.3s ease, transform 0.2s ease !important;
-  }
-
-  .button-inner.variant-primary:hover {
-    box-shadow: 0 0 30px rgba(0, 229, 255, 0.35), 0 4px 16px rgba(0, 0, 0, 0.2) !important;
-    transform: translateY(-1px);
-    background: linear-gradient(135deg, var(--brand-cyan) 0%, #00d4ee 100%) !important;
-  }
-
-  [data-theme="light"] .button-inner.variant-primary {
-    box-shadow: 0 2px 8px rgba(0, 184, 212, 0.2);
-  }
-
-  [data-theme="light"] .button-inner.variant-primary:hover {
-    box-shadow: 0 4px 16px rgba(0, 184, 212, 0.3) !important;
-  }
-
-  /* Ghost/secondary buttons: border treatment */
-  .button-inner.variant-ghost:hover,
-  .button-inner.variant-secondary:hover {
-    border-color: var(--brand-cyan) !important;
-    color: var(--brand-cyan) !important;
-  }
-
-  /* Feature split sections: offset image border effect */
-  .feature-split .image {
-    position: relative;
-  }
-
-  .feature-split .image::after {
-    content: "";
-    position: absolute;
-    inset: 8px -8px -8px 8px;
-    border: 2px solid var(--brand-cyan);
-    border-radius: var(--radius-md);
-    opacity: 0.15;
-    z-index: -1;
-    transition: opacity 0.3s ease;
-  }
-
-  .feature-split:hover .image::after {
-    opacity: 0.3;
-  }
-
-  [data-theme="light"] .feature-split .image::after {
-    border-color: var(--brand-cyan-dim);
-    opacity: 0.1;
-  }
-
-  /* Testimonial sections: large quotation mark accent */
-  .testimonial-section {
-    position: relative;
-  }
-
-  .testimonial-section::after {
-    content: "\201C";
-    position: absolute;
-    top: 0.5em;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 8rem;
-    line-height: 1;
-    color: var(--brand-cyan);
-    opacity: 0.06;
-    font-family: var(--font-headings);
-    pointer-events: none;
-  }
-
-  /* Headings: gradient underline on h2 in sections */
-  .custom-section h2 {
-    position: relative;
-    display: inline-block;
-  }
-
-  /* Dot grid on surface-bg sections */
-  .custom-section > .outer-content > .background > .bg-surface {
-    background-image:
-      radial-gradient(circle, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
-    background-size: 32px 32px;
-  }
-
-  [data-theme="light"] .custom-section > .outer-content > .background > .bg-surface {
-    background-image:
-      radial-gradient(circle, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-    background-size: 32px 32px;
-  }
-
-  /* Footer: gradient top border */
-  .footer-section {
-    border-top: 1px solid transparent;
-    border-image: linear-gradient(90deg, transparent 5%, var(--brand-cyan) 30%, var(--brand-coral) 70%, transparent 95%) 1;
-  }
-
-  /* Accordion FAQ items: cyan accent on open */
-  .accordion-item[open] summary {
-    color: var(--brand-cyan);
-  }
-
-  /* Blog cards: hover lift + cyan border-top */
-  .blog-card .card-inner {
-    border-top: 2px solid transparent;
-    transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .blog-card .card-inner:hover {
-    border-top-color: var(--brand-cyan);
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-  }
-
-  /* Animated scanline on hero (subtle, decorative) */
-  @keyframes signal-scanline {
-    0% { top: -2px; }
-    100% { top: 100%; }
-  }
-
-  .hero-center::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.15), transparent);
-    animation: signal-scanline 8s linear infinite;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  /* Icon backgrounds: use brand colors */
-  .icon .icon-bg {
-    background-color: rgba(0, 229, 255, 0.08) !important;
-    border: 1px solid rgba(0, 229, 255, 0.1);
-  }
-
-  [data-theme="light"] .icon .icon-bg {
-    background-color: rgba(0, 184, 212, 0.06) !important;
-    border: 1px solid rgba(0, 184, 212, 0.08);
-  }
-
-  /* Nav bar links: brand hover color */
-  .bar-link:hover,
-  .bar-link.active {
-    color: var(--brand-cyan) !important;
-  }
-
-  /* Staggered animation for grid items */
-  .feature-grid-item:nth-child(1) { transition-delay: 0.05s; }
-  .feature-grid-item:nth-child(2) { transition-delay: 0.1s; }
-  .feature-grid-item:nth-child(3) { transition-delay: 0.15s; }
-  .feature-grid-item:nth-child(4) { transition-delay: 0.2s; }
-  .feature-grid-item:nth-child(5) { transition-delay: 0.25s; }
-  .feature-grid-item:nth-child(6) { transition-delay: 0.3s; }
 }

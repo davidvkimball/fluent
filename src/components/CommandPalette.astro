@@ -25,7 +25,7 @@ const searchItems = [
       type: "post",
     })),
 ];
-const searchDataJson = JSON.stringify(searchItems);
+const searchData = searchItems;
 ---
 
 <div data-command-dialog>
@@ -289,14 +289,14 @@ const searchDataJson = JSON.stringify(searchItems);
   })();
 </script>
 
-<script is:inline define:vars={{ searchDataJson }}>
-  window.__signalSearchData = searchDataJson;
+<script is:inline define:vars={{ searchData }}>
+  window.__signalSearchData = searchData;
 </script>
 
 <script>
   import Fuse from 'fuse.js';
 
-  const searchItems = JSON.parse((window as any).__signalSearchData || '[]');
+  const searchItems = Array.isArray((window as any).__signalSearchData) ? (window as any).__signalSearchData : [];
   const fuse = new Fuse(searchItems, { keys: ['title', 'description', 'tags'], threshold: 0.3, includeScore: true });
 
   const PINNED_IDS = ['command-group-pages', 'command-group-actions'];

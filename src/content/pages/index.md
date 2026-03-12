@@ -20,11 +20,61 @@ pageSections:
       - _component: building-blocks/core-elements/button
         text: See Our Work
         link: /work/
-        variant: secondary
+        variant: tertiary
         size: lg
     colorScheme: dark
     backgroundColor: base
     paddingVertical: 6xl
+
+  - _component: page-sections/builders/custom-section
+    label: stats
+    maxContentWidth: 2xl
+    paddingHorizontal: lg
+    paddingVertical: 4xl
+    colorScheme: dark
+    backgroundColor: surface
+    contentSections:
+      - _component: building-blocks/wrappers/grid
+        gap: lg
+        minItemWidth: "200"
+        maxItemWidth: "300"
+        items:
+          - contentSections:
+              - _component: building-blocks/core-elements/counter
+                number: 340
+                suffix: "%"
+                alignX: center
+                size: 3xl
+              - _component: building-blocks/core-elements/simple-text
+                text: "Average revenue growth for our clients"
+                alignX: center
+          - contentSections:
+              - _component: building-blocks/core-elements/counter
+                number: 48
+                suffix: "x"
+                alignX: center
+                size: 3xl
+              - _component: building-blocks/core-elements/simple-text
+                text: "Best ROAS achieved across campaigns"
+                alignX: center
+          - contentSections:
+              - _component: building-blocks/core-elements/counter
+                number: 12
+                suffix: "K+"
+                alignX: center
+                size: 3xl
+              - _component: building-blocks/core-elements/simple-text
+                text: "Monthly organic visitors generated"
+                alignX: center
+          - contentSections:
+              - _component: building-blocks/core-elements/counter
+                number: 97
+                suffix: "%"
+                alignX: center
+                size: 3xl
+              - _component: building-blocks/core-elements/simple-text
+                text: "Client retention rate year over year"
+                alignX: center
 
   - _component: page-sections/features/feature-grid
     eyebrow: WHAT WE DO
@@ -70,54 +120,44 @@ pageSections:
           GA4 setups, conversion tracking, A/B testing. Decisions backed by
           data, not gut feelings and vanity metrics.
     colorScheme: dark
-    backgroundColor: surface
-    paddingVertical: 5xl
-
-  - _component: page-sections/features/feature-split
-    eyebrow: CASE STUDY
-    heading: "Meridian Outdoors: 340% revenue growth in 9 months"
-    subtext: >-
-      Meridian came to us spending $40K/month on Meta ads with a 1.2x ROAS.
-      We rebuilt their funnel from the ground up: new landing pages, restructured
-      campaigns, lifecycle email flows. Nine months later they hit $2.1M in
-      monthly revenue with a 4.8x blended ROAS.
-    buttonSections:
-      - _component: building-blocks/core-elements/button
-        text: See All Work
-        link: /work/
-        variant: primary
-        size: md
-    imageSource: /src/assets/images/component-docs/sunset.jpg
-    imageAlt: Meridian Outdoors campaign results
-    imageAspectRatio: landscape
-    imageRounded: true
-    reverse: false
-    colorScheme: dark
     backgroundColor: base
     paddingVertical: 5xl
 
-  - _component: page-sections/features/feature-split
-    eyebrow: CASE STUDY
-    heading: "Vault Health: from 0 to 12K organic visitors/month"
-    subtext: >-
-      A telehealth startup with zero organic presence. We built their content
-      engine from scratch. 180 pages of medically-reviewed content, a technical
-      SEO overhaul, and strategic link building. They now rank for 2,400+
-      keywords and organic is their highest-converting channel.
-    buttonSections:
-      - _component: building-blocks/core-elements/button
-        text: Read the Details
-        link: /work/
-        variant: primary
-        size: md
-    imageSource: /src/assets/images/component-docs/castle.jpg
-    imageAlt: Vault Health SEO results
-    imageAspectRatio: landscape
-    imageRounded: true
-    reverse: true
+  - _component: page-sections/features/feature-slider
     colorScheme: dark
     backgroundColor: surface
     paddingVertical: 5xl
+    slides:
+      - _component: page-sections/features/feature-slider/feature-slider-item
+        eyebrow: CASE STUDY
+        title: "Meridian Outdoors: 340% revenue growth in 9 months"
+        description: >-
+          Meridian came to us spending $40K/month on Meta ads with a 1.2x ROAS.
+          We rebuilt their funnel from the ground up: new landing pages,
+          restructured campaigns, lifecycle email flows. Nine months later they
+          hit $2.1M in monthly revenue with a 4.8x blended ROAS.
+        imageSource: /src/assets/images/component-docs/sunset.jpg
+        imageAlt: Meridian Outdoors campaign
+      - _component: page-sections/features/feature-slider/feature-slider-item
+        eyebrow: CASE STUDY
+        title: "Vault Health: from 0 to 12K organic visitors/month"
+        description: >-
+          A telehealth startup with zero organic presence. We built their
+          content engine from scratch. 180 pages of medically-reviewed content,
+          a technical SEO overhaul, and strategic link building. They now rank
+          for 2,400+ keywords.
+        imageSource: /src/assets/images/component-docs/castle.jpg
+        imageAlt: Vault Health results
+      - _component: page-sections/features/feature-slider/feature-slider-item
+        eyebrow: CASE STUDY
+        title: "Basecamp Labs: 6-week website rebuild, 2x conversions"
+        description: >-
+          Their old WordPress site loaded in 8 seconds and converted at 0.4%.
+          We rebuilt on Astro with CloudCannon CMS, launched in six weeks,
+          and watched conversions double in the first month. The team updates
+          content without developer tickets.
+        imageSource: /src/assets/images/component-docs/dunedin-cliff.jpg
+        imageAlt: Basecamp Labs website
 
   - _component: page-sections/people/testimonial-section
     text: >-
@@ -129,7 +169,7 @@ pageSections:
     authorDescription: CEO, Meridian Outdoors
     colorScheme: dark
     backgroundColor: base
-    paddingVertical: 5xl
+    paddingVertical: 4xl
 
   - _component: page-sections/people/testimonial-section
     text: >-
@@ -140,24 +180,14 @@ pageSections:
     authorDescription: VP Marketing, Vault Health
     colorScheme: dark
     backgroundColor: surface
-    paddingVertical: 5xl
+    paddingVertical: 4xl
 
-  - _component: page-sections/people/testimonial-section
-    text: >-
-      They rebuilt our entire web presence in six weeks. The site loads in
-      under a second, conversions doubled, and our team can actually
-      update it without filing a ticket.
-    authorName: Maria Okafor
-    authorDescription: Head of Growth, Basecamp Labs
-    colorScheme: dark
-    backgroundColor: base
-    paddingVertical: 5xl
-
-  - _component: page-sections/ctas/cta-center
+  - _component: page-sections/ctas/cta-split
     heading: "Ready to stop guessing?"
     subtext: >-
       Tell us what you are working on. If we can help, we will tell you how.
-      If we cannot, we will tell you that too.
+      If we cannot, we will tell you that too. No pitch decks. No 12-week
+      onboarding. Just results.
     buttonSections:
       - _component: building-blocks/core-elements/button
         text: Start a Conversation
@@ -167,9 +197,12 @@ pageSections:
       - _component: building-blocks/core-elements/button
         text: See Our Work
         link: /work/
-        variant: ghost
+        variant: tertiary
         size: lg
+    imageSource: /src/assets/images/component-docs/quiet-street.jpg
+    imageAlt: SIGNAL office
+    reverse: false
     colorScheme: dark
-    backgroundColor: surface
-    paddingVertical: 6xl
+    backgroundColor: base
+    paddingVertical: 5xl
 ---
