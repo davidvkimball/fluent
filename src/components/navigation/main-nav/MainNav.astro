@@ -54,11 +54,6 @@ const mobileNavData = [
       class="desktop-main-nav"
     />
 
-    <button id="command-palette-trigger" class="nav-search-trigger" aria-label="Search (Ctrl+K)" type="button">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
-      <kbd>⌘K</kbd>
-    </button>
-
     <ButtonGroup
       direction="row"
       align="center"
@@ -135,39 +130,6 @@ const mobileNavData = [
         }
       }
 
-      .nav-search-trigger {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 12px;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-sm);
-        color: var(--color-text-muted);
-        font-size: 0.8125rem;
-        cursor: pointer;
-        transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
-
-        &:hover {
-          border-color: var(--brand-cyan);
-          color: var(--brand-cyan);
-          background: rgba(0, 229, 255, 0.04);
-        }
-
-        kbd {
-          font-family: var(--font-body);
-          font-size: 0.6875rem;
-          padding: 1px 5px;
-          border: 1px solid var(--color-border);
-          border-radius: 3px;
-          opacity: 0.6;
-        }
-
-        @container (max-width: 768px) {
-          kbd { display: none; }
-          padding: 6px 8px;
-        }
-      }
-    }
+}
   }
 </style>
