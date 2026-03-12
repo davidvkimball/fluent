@@ -202,4 +202,186 @@
     background: linear-gradient(90deg, transparent, var(--brand-cyan), var(--brand-coral), transparent);
     opacity: 0.4;
   }
+
+  /* ============================================
+     SIGNAL — Visual differentiation overrides
+     ============================================ */
+
+  /* Feature grid cards: cyan left border accent + subtle glow on hover */
+  .feature-grid-item .card-inner.border {
+    border-left: 3px solid var(--brand-cyan);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .feature-grid-item .card-inner.border:hover {
+    border-left-color: var(--brand-coral);
+    box-shadow:
+      0 0 0 1px rgba(0, 229, 255, 0.06),
+      0 12px 40px rgba(0, 0, 0, 0.2);
+    transform: translateY(-4px);
+  }
+
+  [data-theme="light"] .feature-grid-item .card-inner.border:hover {
+    box-shadow:
+      0 0 0 1px rgba(0, 184, 212, 0.08),
+      0 12px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Primary button: gradient background + glow */
+  .button-inner.variant-primary {
+    background: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-cyan-dim) 100%) !important;
+    border: none !important;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+    transition: box-shadow 0.3s ease, transform 0.2s ease !important;
+  }
+
+  .button-inner.variant-primary:hover {
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.35), 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, var(--brand-cyan) 0%, #00d4ee 100%) !important;
+  }
+
+  [data-theme="light"] .button-inner.variant-primary {
+    box-shadow: 0 2px 8px rgba(0, 184, 212, 0.2);
+  }
+
+  [data-theme="light"] .button-inner.variant-primary:hover {
+    box-shadow: 0 4px 16px rgba(0, 184, 212, 0.3) !important;
+  }
+
+  /* Ghost/secondary buttons: border treatment */
+  .button-inner.variant-ghost:hover,
+  .button-inner.variant-secondary:hover {
+    border-color: var(--brand-cyan) !important;
+    color: var(--brand-cyan) !important;
+  }
+
+  /* Feature split sections: offset image border effect */
+  .feature-split .image {
+    position: relative;
+  }
+
+  .feature-split .image::after {
+    content: "";
+    position: absolute;
+    inset: 8px -8px -8px 8px;
+    border: 2px solid var(--brand-cyan);
+    border-radius: var(--radius-md);
+    opacity: 0.15;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+  }
+
+  .feature-split:hover .image::after {
+    opacity: 0.3;
+  }
+
+  [data-theme="light"] .feature-split .image::after {
+    border-color: var(--brand-cyan-dim);
+    opacity: 0.1;
+  }
+
+  /* Testimonial sections: large quotation mark accent */
+  .testimonial-section {
+    position: relative;
+  }
+
+  .testimonial-section::after {
+    content: "\201C";
+    position: absolute;
+    top: 0.5em;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8rem;
+    line-height: 1;
+    color: var(--brand-cyan);
+    opacity: 0.06;
+    font-family: var(--font-headings);
+    pointer-events: none;
+  }
+
+  /* Headings: gradient underline on h2 in sections */
+  .custom-section h2 {
+    position: relative;
+    display: inline-block;
+  }
+
+  /* Dot grid on surface-bg sections */
+  .custom-section > .outer-content > .background > .bg-surface {
+    background-image:
+      radial-gradient(circle, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  [data-theme="light"] .custom-section > .outer-content > .background > .bg-surface {
+    background-image:
+      radial-gradient(circle, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* Footer: gradient top border */
+  .footer-section {
+    border-top: 1px solid transparent;
+    border-image: linear-gradient(90deg, transparent 5%, var(--brand-cyan) 30%, var(--brand-coral) 70%, transparent 95%) 1;
+  }
+
+  /* Accordion FAQ items: cyan accent on open */
+  .accordion-item[open] summary {
+    color: var(--brand-cyan);
+  }
+
+  /* Blog cards: hover lift + cyan border-top */
+  .blog-card .card-inner {
+    border-top: 2px solid transparent;
+    transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .blog-card .card-inner:hover {
+    border-top-color: var(--brand-cyan);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Animated scanline on hero (subtle, decorative) */
+  @keyframes signal-scanline {
+    0% { top: -2px; }
+    100% { top: 100%; }
+  }
+
+  .hero-center::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.15), transparent);
+    animation: signal-scanline 8s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Icon backgrounds: use brand colors */
+  .icon .icon-bg {
+    background-color: rgba(0, 229, 255, 0.08) !important;
+    border: 1px solid rgba(0, 229, 255, 0.1);
+  }
+
+  [data-theme="light"] .icon .icon-bg {
+    background-color: rgba(0, 184, 212, 0.06) !important;
+    border: 1px solid rgba(0, 184, 212, 0.08);
+  }
+
+  /* Nav bar links: brand hover color */
+  .bar-link:hover,
+  .bar-link.active {
+    color: var(--brand-cyan) !important;
+  }
+
+  /* Staggered animation for grid items */
+  .feature-grid-item:nth-child(1) { transition-delay: 0.05s; }
+  .feature-grid-item:nth-child(2) { transition-delay: 0.1s; }
+  .feature-grid-item:nth-child(3) { transition-delay: 0.15s; }
+  .feature-grid-item:nth-child(4) { transition-delay: 0.2s; }
+  .feature-grid-item:nth-child(5) { transition-delay: 0.25s; }
+  .feature-grid-item:nth-child(6) { transition-delay: 0.3s; }
 }

@@ -1,5 +1,6 @@
 ---
 import StructuredData from "@components/utils/StructuredData.astro";
+import CommandPalette from "@components/CommandPalette.astro";
 import seoData from "@data/seo.json";
 import "@styles/style.css";
 import { SEO } from "astro-seo";
@@ -95,6 +96,7 @@ const pageImage = props.image || seoData.logoSource;
     <slot name="head" />
   </head>
   <body>
+    <CommandPalette />
     <div>
       <slot />
     </div>

@@ -1,0 +1,459 @@
+---
+import { getCollection } from "astro:content";
+
+// SIGNAL Command Palette — Ctrl+K fuzzy search
+const navPages = [
+  { title: "Home", url: "/", type: "page" },
+  { title: "Services", url: "/services/", type: "page" },
+  { title: "Work", url: "/work/", type: "page" },
+  { title: "About", url: "/about/", type: "page" },
+  { title: "Blog", url: "/blog/", type: "page" },
+  { title: "Contact", url: "/contact/", type: "page" },
+];
+
+// Build search index at build time
+const blogPosts = await getCollection("blog");
+const searchItems = [
+  ...navPages,
+  ...blogPosts
+    .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+    .map((post) => ({
+      title: post.data.title,
+      description: post.data.description,
+      url: `/blog/${post.id}/`,
+      tags: post.data.tags || [],
+      type: "post",
+    })),
+];
+const searchDataJson = JSON.stringify(searchItems);
+---
+
+<div data-command-dialog>
+  <div class="signal-cmd-overlay" data-command-dialog-overlay hidden></div>
+  <div class="signal-cmd-content" data-command-dialog-content hidden>
+    <div class="signal-cmd-inner" data-command>
+      <div class="signal-cmd-input-wrap">
+        <svg class="signal-cmd-search-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+        <input
+          type="text"
+          data-command-input
+          role="combobox"
+          aria-expanded="true"
+          aria-autocomplete="list"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+          placeholder="Search pages and posts..."
+        />
+        <button type="button" data-command-close class="signal-cmd-close-btn" aria-label="Close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="signal-cmd-list" data-command-list role="listbox" aria-label="Suggestions">
+        <div class="signal-cmd-empty" data-command-empty hidden>No results found.</div>
+
+        <!-- Pinned pages -->
+        <div data-command-group id="command-group-pages">
+          <div class="signal-cmd-group-label">Pages</div>
+          {navPages.map((page) => (
+            <div class="signal-cmd-item" data-command-item data-value={page.title} data-href={page.url} role="option" aria-selected="false">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5;flex-shrink:0"><path d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
+              <span>{page.title}</span>
+            </div>
+          ))}
+        </div>
+
+        <!-- Actions -->
+        <div data-command-group id="command-group-actions">
+          <div class="signal-cmd-group-label">Actions</div>
+          <div class="signal-cmd-item" data-command-item data-value="Toggle dark mode" data-action="toggle-theme" role="option" aria-selected="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5;flex-shrink:0"><path d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"/></svg>
+            <span>Toggle dark mode</span>
+          </div>
+        </div>
+
+        <!-- Search results -->
+        <div data-command-group id="command-group-results" class="signal-cmd-hidden">
+          <div class="signal-cmd-group-label">Results</div>
+          <div id="command-results-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  @layer components {
+    .signal-cmd-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    .signal-cmd-overlay.dialog-open { opacity: 1; }
+    .signal-cmd-overlay.dialog-closing { opacity: 0; }
+
+    .signal-cmd-content {
+      position: fixed;
+      z-index: 101;
+      inset: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 15vh;
+    }
+
+    .signal-cmd-inner {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 var(--spacing-md);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow:
+        0 0 0 1px rgba(0, 229, 255, 0.08),
+        0 16px 64px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.96) translateY(-8px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+    .dialog-open .signal-cmd-inner {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    .dialog-closing .signal-cmd-inner {
+      opacity: 0;
+      transform: scale(0.96) translateY(-8px);
+    }
+
+    [data-theme="light"] .signal-cmd-inner {
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.08),
+        0 16px 64px rgba(0, 0, 0, 0.15);
+    }
+
+    .signal-cmd-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .signal-cmd-search-icon {
+      color: var(--brand-cyan);
+      flex-shrink: 0;
+    }
+
+    .signal-cmd-input-wrap input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 0.9375rem;
+      font-family: var(--font-body);
+      color: var(--color-text);
+      padding: var(--spacing-xs) 0;
+    }
+    .signal-cmd-input-wrap input::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    .signal-cmd-close-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+    @media (max-width: 640px) {
+      .signal-cmd-close-btn { display: flex; }
+    }
+
+    .signal-cmd-list {
+      max-height: 360px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: var(--spacing-xs);
+    }
+
+    .signal-cmd-group-label {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--brand-cyan);
+      font-family: var(--font-headings);
+    }
+
+    .signal-cmd-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--radius-xs);
+      font-size: 0.875rem;
+      color: var(--color-text);
+      cursor: pointer;
+      transition: background-color 0.1s ease;
+    }
+    .signal-cmd-item:hover,
+    .signal-cmd-item[data-selected="true"] {
+      background: rgba(0, 229, 255, 0.08);
+    }
+    [data-theme="light"] .signal-cmd-item:hover,
+    [data-theme="light"] .signal-cmd-item[data-selected="true"] {
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .signal-cmd-item .signal-cmd-subtitle {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+
+    .signal-cmd-empty {
+      text-align: center;
+      padding: var(--spacing-lg);
+      color: var(--color-text-muted);
+      font-size: 0.875rem;
+    }
+
+    .signal-cmd-hidden {
+      display: none;
+    }
+  }
+</style>
+
+<script is:inline>
+  // Inline: Ctrl+K toggle + overlay close + mobile close
+  (function() {
+    function getEls() {
+      var d = document.querySelector('[data-command-dialog]');
+      if (!d) return null;
+      return {
+        overlay: d.querySelector('[data-command-dialog-overlay]'),
+        content: d.querySelector('[data-command-dialog-content]'),
+        input: d.querySelector('[data-command-input]')
+      };
+    }
+    function isOpen() { var e = getEls(); return e && e.overlay && !e.overlay.hidden; }
+    function open() {
+      var e = getEls(); if (!e) return;
+      if (e.overlay) { e.overlay.hidden = false; requestAnimationFrame(function() { e.overlay.classList.add('dialog-open'); }); }
+      if (e.content) { e.content.hidden = false; requestAnimationFrame(function() { e.content.classList.add('dialog-open'); }); if (e.input) e.input.focus(); }
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      var e = getEls(); if (!e) return;
+      if (e.overlay) { e.overlay.classList.remove('dialog-open'); e.overlay.classList.add('dialog-closing'); }
+      if (e.content) { e.content.classList.remove('dialog-open'); e.content.classList.add('dialog-closing'); }
+      setTimeout(function() {
+        if (e.overlay) { e.overlay.hidden = true; e.overlay.classList.remove('dialog-closing'); }
+        if (e.content) { e.content.hidden = true; e.content.classList.remove('dialog-closing'); }
+      }, 150);
+      document.body.style.overflow = '';
+      if (e.input) e.input.value = '';
+    }
+    // Keyboard
+    document.addEventListener('keydown', function(ev) {
+      if ((ev.metaKey || ev.ctrlKey) && ev.key === 'k') { ev.preventDefault(); isOpen() ? close() : open(); }
+      if (ev.key === 'Escape' && isOpen()) close();
+    });
+    // Overlay click
+    document.addEventListener('click', function(ev) {
+      if (ev.target && ev.target.hasAttribute && ev.target.hasAttribute('data-command-dialog-overlay')) close();
+    });
+    // Close button
+    var closeBtn = document.querySelector('[data-command-close]');
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    // Trigger button
+    function bindTrigger() {
+      var btn = document.getElementById('command-palette-trigger');
+      if (btn && !btn.dataset.cmdBound) {
+        btn.dataset.cmdBound = 'true';
+        btn.addEventListener('click', function(ev) { ev.preventDefault(); isOpen() ? close() : open(); });
+      }
+    }
+    bindTrigger();
+    // Expose for module script
+    window.__signalCmdOpen = open;
+    window.__signalCmdClose = close;
+  })();
+</script>
+
+<script is:inline define:vars={{ searchDataJson }}>
+  window.__signalSearchData = searchDataJson;
+</script>
+
+<script>
+  import Fuse from 'fuse.js';
+
+  const searchItems = JSON.parse((window as any).__signalSearchData || '[]');
+  const fuse = new Fuse(searchItems, { keys: ['title', 'description', 'tags'], threshold: 0.3, includeScore: true });
+
+  const PINNED_IDS = ['command-group-pages', 'command-group-actions'];
+  const SEARCH_IDS = ['command-group-results'];
+
+  function showPinned() {
+    PINNED_IDS.forEach(id => { const el = document.getElementById(id); if (el) { el.style.display = ''; el.classList.remove('signal-cmd-hidden'); } });
+    SEARCH_IDS.forEach(id => { const el = document.getElementById(id); if (el) { el.style.display = 'none'; el.classList.add('signal-cmd-hidden'); } });
+    (document.querySelector('[data-command-empty]') as HTMLElement | null)!.hidden = true;
+  }
+
+  function hidePinned() {
+    PINNED_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+  }
+
+  let selectedIndex = 0;
+
+  function getAllItems(): HTMLElement[] {
+    const items: HTMLElement[] = [];
+    document.querySelectorAll('[data-command-group]').forEach(group => {
+      const g = group as HTMLElement;
+      if (g.style.display === 'none' || g.classList.contains('signal-cmd-hidden')) return;
+      g.querySelectorAll('[data-command-item], [data-search-result]').forEach(el => items.push(el as HTMLElement));
+    });
+    return items;
+  }
+
+  function clearSelection() {
+    document.querySelectorAll('[data-selected="true"]').forEach(el => {
+      el.removeAttribute('data-selected');
+      el.setAttribute('aria-selected', 'false');
+    });
+  }
+
+  function updateSelection() {
+    clearSelection();
+    const items = getAllItems();
+    if (selectedIndex >= 0 && selectedIndex < items.length) {
+      const item = items[selectedIndex];
+      item.setAttribute('data-selected', 'true');
+      item.setAttribute('aria-selected', 'true');
+      item.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function escapeHtml(str: string) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function handleInput(e: Event) {
+    const input = e.target as HTMLInputElement;
+    const query = input.value.trim();
+    const empty = document.querySelector('[data-command-empty]') as HTMLElement;
+
+    if (!query) {
+      showPinned();
+      selectedIndex = 0;
+      updateSelection();
+      return;
+    }
+
+    hidePinned();
+    const resultsGroup = document.getElementById('command-group-results');
+    const resultsList = document.getElementById('command-results-list');
+    if (!resultsGroup || !resultsList) return;
+
+    const results = fuse.search(query, { limit: 10 });
+    if (results.length === 0) {
+      resultsGroup.style.display = 'none';
+      if (empty) empty.hidden = false;
+    } else {
+      resultsGroup.style.display = '';
+      resultsGroup.classList.remove('signal-cmd-hidden');
+      if (empty) empty.hidden = true;
+
+      const postIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5;flex-shrink:0"><path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z"/><path d="M19.5 7.125 16.862 4.487"/><path d="M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"/></svg>`;
+      const pageIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5;flex-shrink:0"><path d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>`;
+
+      resultsList.innerHTML = results.map(r => {
+        const item = r.item;
+        const icon = item.type === 'post' ? postIcon : pageIcon;
+        const subtitle = item.description ? `<div class="signal-cmd-subtitle">${escapeHtml(item.description)}</div>` : '';
+        return `<div class="signal-cmd-item" data-search-result data-href="${escapeHtml(item.url)}" role="option" aria-selected="false">
+          ${icon}
+          <div style="min-width:0;flex:1">
+            <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(item.title)}</div>
+            ${subtitle}
+          </div>
+        </div>`;
+      }).join('');
+
+      // Bind click on results
+      resultsList.querySelectorAll('[data-search-result]').forEach(el => {
+        el.addEventListener('click', () => {
+          const href = (el as HTMLElement).getAttribute('data-href');
+          if (href) { (window as any).__signalCmdClose(); window.location.href = href; }
+        });
+        el.addEventListener('mouseenter', () => {
+          const items = getAllItems();
+          const idx = items.indexOf(el as HTMLElement);
+          if (idx >= 0) { selectedIndex = idx; updateSelection(); }
+        });
+      });
+    }
+
+    selectedIndex = 0;
+    updateSelection();
+  }
+
+  // Bind events
+  const input = document.querySelector('[data-command-input]') as HTMLInputElement;
+  if (input) {
+    input.addEventListener('input', handleInput);
+    input.addEventListener('keydown', (e) => {
+      const items = getAllItems();
+      if (e.key === 'ArrowDown') { e.preventDefault(); selectedIndex = (selectedIndex + 1) % items.length; updateSelection(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); selectedIndex = (selectedIndex - 1 + items.length) % items.length; updateSelection(); }
+      else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (selectedIndex >= 0 && items[selectedIndex]) {
+          const item = items[selectedIndex];
+          const action = item.getAttribute('data-action');
+          if (action === 'toggle-theme') {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+            localStorage.setItem('signal-theme', current === 'dark' ? 'light' : 'dark');
+            (window as any).__signalCmdClose();
+            return;
+          }
+          const href = item.getAttribute('data-href');
+          if (href) { (window as any).__signalCmdClose(); window.location.href = href; }
+        }
+      }
+    });
+  }
+
+  // Bind pinned item clicks
+  document.querySelectorAll('[data-command-item]').forEach(el => {
+    el.addEventListener('click', () => {
+      const action = (el as HTMLElement).getAttribute('data-action');
+      if (action === 'toggle-theme') {
+        const html = document.documentElement;
+        const current = html.getAttribute('data-theme');
+        html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        localStorage.setItem('signal-theme', current === 'dark' ? 'light' : 'dark');
+        (window as any).__signalCmdClose();
+        return;
+      }
+      const href = (el as HTMLElement).getAttribute('data-href');
+      if (href) { (window as any).__signalCmdClose(); window.location.href = href; }
+    });
+    el.addEventListener('mouseenter', () => {
+      const items = getAllItems();
+      const idx = items.indexOf(el as HTMLElement);
+      if (idx >= 0) { selectedIndex = idx; updateSelection(); }
+    });
+  });
+
+</script>

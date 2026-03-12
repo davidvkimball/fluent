@@ -120,29 +120,38 @@ pageSections:
     paddingVertical: 5xl
 
   - _component: page-sections/people/testimonial-section
-    heading: "What our clients say"
+    text: >-
+      SIGNAL is the first agency that actually moved our numbers. Not
+      vanity metrics, real revenue. They think like operators, not
+      consultants. We went from burning cash on ads to a 4.8x ROAS
+      in under a year.
+    authorName: Rachel Torres
+    authorDescription: CEO, Meridian Outdoors
     colorScheme: dark
     backgroundColor: base
     paddingVertical: 5xl
-    testimonials:
-      - quote: >-
-          SIGNAL is the first agency that actually moved our numbers. Not
-          vanity metrics, real revenue. They think like operators, not
-          consultants.
-        author: Rachel Torres
-        role: CEO, Meridian Outdoors
-      - quote: >-
-          We interviewed eight agencies. SIGNAL was the only one that told us
-          what we were doing wrong in the pitch instead of just agreeing with
-          everything. That honesty has saved us hundreds of thousands.
-        author: James Liu
-        role: VP Marketing, Vault Health
-      - quote: >-
-          They rebuilt our entire web presence in six weeks. The site loads in
-          under a second, conversions doubled, and our team can actually
-          update it without filing a ticket.
-        author: Maria Okafor
-        role: Head of Growth, Basecamp Labs
+
+  - _component: page-sections/people/testimonial-section
+    text: >-
+      We interviewed eight agencies. SIGNAL was the only one that told us
+      what we were doing wrong in the pitch instead of just agreeing with
+      everything. That honesty has saved us hundreds of thousands.
+    authorName: James Liu
+    authorDescription: VP Marketing, Vault Health
+    colorScheme: dark
+    backgroundColor: surface
+    paddingVertical: 5xl
+
+  - _component: page-sections/people/testimonial-section
+    text: >-
+      They rebuilt our entire web presence in six weeks. The site loads in
+      under a second, conversions doubled, and our team can actually
+      update it without filing a ticket.
+    authorName: Maria Okafor
+    authorDescription: Head of Growth, Basecamp Labs
+    colorScheme: dark
+    backgroundColor: base
+    paddingVertical: 5xl
 
   - _component: page-sections/ctas/cta-center
     heading: "Ready to stop guessing?"

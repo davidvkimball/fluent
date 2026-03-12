@@ -3,7 +3,14 @@
   "type": "module",
   "version": "1.0.0",
   "description": "Where knowledge flows. A premium design system for building stunning, content-first websites with Astro and CloudCannon.",
-  "keywords": ["design-system", "astro", "components", "css", "design-tokens", "cloudcannon"],
+  "keywords": [
+    "design-system",
+    "astro",
+    "components",
+    "css",
+    "design-tokens",
+    "cloudcannon"
+  ],
   "author": "David V. Kimball",
   "license": "MIT",
   "scripts": {
@@ -40,6 +47,7 @@
     "embla-carousel": "^8.6.0",
     "embla-carousel-auto-scroll": "^8.6.0",
     "embla-carousel-autoplay": "^8.6.0",
+    "fuse.js": "^7.1.0",
     "glob": "^13.0.6",
     "js-beautify": "^1.15.4",
     "js-yaml": "^4.1.1",
