@@ -101,6 +101,48 @@ const {
   </div>
 </CustomSection>
 
+<script>
+  import { onPageLoad } from "@component-utils/onPageLoad";
+
+  function initCardTilt() {
+    const cards = document.querySelectorAll('.bento-grid__item-inner');
+    cards.forEach((card) => {
+      const el = card as HTMLElement;
+      if (el.dataset.tiltInit) return;
+      el.dataset.tiltInit = 'true';
+
+      el.addEventListener('mousemove', (e: MouseEvent) => {
+        const rect = el.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -6;
+        const rotateY = ((x - centerX) / centerX) * 6;
+        el.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+
+        // Move glow to cursor position
+        const glow = el.querySelector('.bento-grid__item-glow') as HTMLElement;
+        if (glow) {
+          glow.style.top = `${y - rect.height * 0.5}px`;
+          glow.style.left = `${x - rect.width * 0.5}px`;
+          glow.style.opacity = '1';
+        }
+      });
+
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = '';
+        const glow = el.querySelector('.bento-grid__item-glow') as HTMLElement;
+        if (glow) {
+          glow.style.opacity = '0';
+        }
+      });
+    });
+  }
+
+  onPageLoad(initCardTilt);
+</script>
+
 <style>
   @layer page-sections {
     :global(.bento-grid__heading) {
@@ -164,8 +206,6 @@ const {
     /* === ITEM STYLING === */
     .bento-grid__item {
       position: relative;
-      border-radius: var(--radius-lg, 12px);
-      overflow: hidden;
       animation: bento-fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
       animation-delay: calc(var(--item-index) * 0.08s);
     }
@@ -189,14 +229,13 @@ const {
       border: 1px solid var(--color-border);
       border-radius: var(--radius-lg, 12px);
       overflow: hidden;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+      transition: transform 0.15s ease, border-color 0.4s ease, box-shadow 0.4s ease;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
     }
 
     .bento-grid__item:hover .bento-grid__item-inner {
-      transform: translateY(-4px);
       border-color: rgba(0, 229, 255, 0.3);
       box-shadow:
         0 0 0 1px rgba(0, 229, 255, 0.08),
@@ -214,40 +253,47 @@ const {
         0 20px 60px -10px rgba(0, 0, 0, 0.08);
     }
 
-    /* Corner glow effect */
+    /* Cursor-following glow effect */
     .bento-grid__item-glow {
       position: absolute;
-      top: -50%;
-      right: -50%;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle, rgba(0, 229, 255, 0.06) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(0, 229, 255, 0.1) 0%, transparent 60%);
       opacity: 0;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.3s ease;
       pointer-events: none;
-    }
-
-    .bento-grid__item:hover .bento-grid__item-glow {
-      opacity: 1;
     }
 
     [data-theme="light"] .bento-grid__item-glow {
       background: radial-gradient(circle, rgba(0, 184, 212, 0.04) 0%, transparent 70%);
     }
 
-    /* === ACCENT VARIANTS === */
-    .bento-grid__item--accent-cyan .bento-grid__item-inner {
-      border-left: 3px solid var(--brand-cyan);
+    /* === ACCENT VARIANTS — subtle top glow inside card === */
+    .bento-grid__item--accent-cyan .bento-grid__item-inner::before,
+    .bento-grid__item--accent-coral .bento-grid__item-inner::before,
+    .bento-grid__item--accent-gradient .bento-grid__item-inner::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      z-index: 1;
     }
 
-    .bento-grid__item--accent-coral .bento-grid__item-inner {
-      border-left: 3px solid var(--brand-coral);
+    .bento-grid__item--accent-cyan .bento-grid__item-inner::before {
+      background: linear-gradient(90deg, transparent 5%, var(--brand-cyan) 50%, transparent 95%);
+      box-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
     }
 
-    .bento-grid__item--accent-gradient .bento-grid__item-inner {
-      border-image: linear-gradient(180deg, var(--brand-cyan), var(--brand-coral)) 1;
-      border-left-width: 3px;
-      border-left-style: solid;
+    .bento-grid__item--accent-coral .bento-grid__item-inner::before {
+      background: linear-gradient(90deg, transparent 5%, var(--brand-coral) 50%, transparent 95%);
+      box-shadow: 0 0 12px rgba(255, 107, 107, 0.3);
+    }
+
+    .bento-grid__item--accent-gradient .bento-grid__item-inner::before {
+      background: linear-gradient(90deg, transparent 5%, var(--brand-cyan) 30%, var(--brand-coral) 70%, transparent 95%);
+      box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
     }
 
     /* === STAT BLOCK === */

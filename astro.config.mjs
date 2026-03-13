@@ -19,6 +19,9 @@ export default defineConfig({
     enabled: false,
   },
   server: {
+    watch: {
+      ignored: ['**/.obsidian/**', '**/_bases/**', '**/bases/**', '**/_home/**', '**/home/**', '**/_base/**', '**/base/**']
+    },
     port: 4321,
   },
   image: {
@@ -80,6 +83,7 @@ export default defineConfig({
     mdx(),
   ],
   vite: {
+    assetsInclude: ['**/*.base', '**/.obsidian/**', '**/_bases/**'],
     css: {
       devSourcemap: true,
       transformer: "lightningcss",

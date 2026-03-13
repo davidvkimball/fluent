@@ -1,9 +1,9 @@
 {
-  "scanDirectories": "",
+  "scanDirectories": "src/content/blog,src/content/pages",
   "ignoreUnderscoreFiles": false,
-  "enableMDXSupport": false,
+  "enableMDXSupport": true,
   "keywordProperty": "",
-  "descriptionProperty": "",
+  "descriptionProperty": "description",
   "titleProperty": "title",
   "useFilenameAsTitle": false,
   "slugProperty": "",

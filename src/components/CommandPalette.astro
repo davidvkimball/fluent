@@ -75,7 +75,6 @@ const searchDataJson = JSON.stringify(searchItems);
   };
 
   const ACTIONS = [
-    { title: "Toggle theme", description: "Switch between light and dark mode", category: "action", action: "toggle-theme" },
     { title: "Go to top", description: "Scroll to the top of the page", category: "action", action: "scroll-top" },
     { title: "Contact us", description: "Start a project with SIGNAL", category: "action", url: "/contact/" },
   ];
@@ -274,12 +273,7 @@ const searchDataJson = JSON.stringify(searchItems);
     const url = el.dataset.url || el.getAttribute('href');
     const dialog = document.getElementById('cmd-palette') as HTMLDialogElement;
 
-    if (action === 'toggle-theme') {
-      const html = document.documentElement;
-      const current = html.getAttribute('data-theme');
-      html.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
-      dialog?.close();
-    } else if (action === 'scroll-top') {
+    if (action === 'scroll-top') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       dialog?.close();
     } else if (url && url !== '#') {

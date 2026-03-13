@@ -6,26 +6,52 @@
   "copyHeadingLinkFormat": "astro",
   "addTrailingSlashToLinks": true,
   "enableOpenTerminalCommand": true,
-  "terminalProjectRootPath": "",
+  "terminalProjectRootPath": ".",
   "terminalApplicationName": "",
   "enableTerminalDebugLogging": false,
   "enableTerminalRibbonIcon": true,
   "enableOpenConfigFileCommand": true,
-  "configFilePath": "",
-  "enableConfigRibbonIcon": false,
-  "contentTypes": [],
+  "configFilePath": "astro.config.mjs",
+  "enableConfigRibbonIcon": true,
+  "contentTypes": [
+    {
+      "id": "content-type-1773355384395-1ioj40c95",
+      "name": "Posts",
+      "folder": "src/content/blog",
+      "linkBasePath": "/blog/",
+      "template": "---\n_schema: \"\"\ntitle: \"{{title}}\"\ndate: {{date}}\ndescription: \"\"\nauthor: \"\"\nimage: \"\"\ntags: []\n---\n",
+      "enabled": true,
+      "creationMode": "file",
+      "indexFileName": "index",
+      "ignoreSubfolders": false,
+      "enableUnderscorePrefix": false
+    },
+    {
+      "id": "content-type-1773355384395-x39cp0wb0",
+      "name": "Pages",
+      "folder": "src/content/pages",
+      "linkBasePath": "/",
+      "template": "---\n_schema: \"\"\ntitle: \"{{title}}\"\ndescription: \"\"\npageSections: []\n- _component:\neyebrow:\nheading:\nsubtext:\nimageSource:\nimageAlt:\nimageAspectRatio:\nbuttonSections:\nreverse:\ncolorScheme:\nbackgroundColor:\npaddingVertical:\nteamMembers:\n- name:\nrole:\nbio:\nalways wanted to:\nitems:\n- title:\ncontentSections:\ntext:\nalignX:\nheadingLevel:\nheadingSize:\nsingleOpen:\nopenFirst:\nmaxContentWidth:\npaddingHorizontal:\nhideText:\nlink:\niconName:\niconPosition:\nvariant:\nsize:\nrounded:\n---\n",
+      "enabled": true,
+      "creationMode": "file",
+      "indexFileName": "index",
+      "ignoreSubfolders": false,
+      "enableUnderscorePrefix": false
+    }
+  ],
   "migrationCompleted": true,
   "helpButtonReplacement": {
     "enabled": true,
     "commandId": "astro-composer:edit-astro-config",
     "iconId": "rocket"
   },
-  "showMdxFilesInExplorer": false,
+  "showMdxFilesInExplorer": true,
   "processBackgroundFileChanges": true,
   "syncDraftDate": false,
   "draftProperty": "",
   "draftLogic": "true-is-draft",
   "publishDateField": "",
+  "renameOnTitleClick": false,
   "updateModifiedDate": false,
   "modifiedDateField": ""
 }
