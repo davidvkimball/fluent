@@ -65,7 +65,7 @@ const {
     />
   </div>
 
-  <div class="bento-grid__layout" data-editable="array" data-prop="items">
+  <div class="bento-grid__layout" data-editable="array" data-prop="items" data-component-key="_component">
     {items.map((item: BentoItem, i: number) => {
       const spanClass = item.span ? `bento-grid__item--${item.span}` : "";
       const accentClass = item.accent && item.accent !== "none" ? `bento-grid__item--accent-${item.accent}` : "";
