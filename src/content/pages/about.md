@@ -14,7 +14,7 @@ pageSections:
       managed eight-figure ad budgets, and shipped products used by millions. We
       took that experience and put it to work for our clients.
     imageSource: /src/assets/images/component-docs/dunedin-cliff.jpg
-    imageAlt: SIGNAL team
+    imageAlt: SIGNAL team collaborating
     imageAspectRatio: portrait
     buttonSections: []
     reverse: true

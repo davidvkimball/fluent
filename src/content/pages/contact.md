@@ -58,7 +58,7 @@ pageSections:
         text: Send Message
         variant: primary
         size: md
-    imageSource: /src/assets/images/component-docs/quiet-street.jpg
+    imageSource: /src/assets/images/component-docs/sheep.jpg
     imageAlt: Get in touch with SIGNAL
     reverse: false
     colorScheme: dark

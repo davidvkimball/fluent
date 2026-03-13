@@ -24,7 +24,7 @@ pageSections:
       implemented post-purchase email flows. Results after 9 months:
       $2.1M monthly revenue, 4.8x blended ROAS, 340% revenue growth.
     buttonSections: []
-    imageSource: /src/assets/images/component-docs/sunset.jpg
+    imageSource: /src/assets/images/component-docs/campaign-results.jpg
     imageAlt: Meridian Outdoors results
     imageAspectRatio: landscape
     imageRounded: true
@@ -43,7 +43,7 @@ pageSections:
       strategic backlink campaign. Results: 12K organic visitors/month,
       2,400+ ranking keywords, CAC down to $45.
     buttonSections: []
-    imageSource: /src/assets/images/component-docs/castle.jpg
+    imageSource: /src/assets/images/component-docs/health-tech.jpg
     imageAlt: Vault Health growth
     imageAspectRatio: landscape
     imageRounded: true
@@ -62,7 +62,7 @@ pageSections:
       campaigns. Results: 180% increase in demo requests, 60% faster
       sales cycle, brand recognition in their target market.
     buttonSections: []
-    imageSource: /src/assets/images/component-docs/quiet-street.jpg
+    imageSource: /src/assets/images/component-docs/startup-office.jpg
     imageAlt: Basecamp Labs brand launch
     imageAspectRatio: landscape
     imageRounded: true
@@ -80,7 +80,7 @@ pageSections:
       created a content strategy around coffee education. Subscription
       signups tripled in 4 months. Churn dropped 38%.
     buttonSections: []
-    imageSource: /src/assets/images/component-docs/dunedin-cliff.jpg
+    imageSource: /src/assets/images/component-docs/coffee-brand.jpg
     imageAlt: Driftwood Coffee results
     imageAspectRatio: landscape
     imageRounded: true

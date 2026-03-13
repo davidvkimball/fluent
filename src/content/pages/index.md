@@ -108,7 +108,7 @@ pageSections:
         description: >-
           Visual identity, messaging frameworks, campaign creative. Brands
           people recognize before they read the logo.
-        imageSource: /src/assets/images/component-docs/sunset.jpg
+        imageSource: /src/assets/images/component-docs/brand-design.jpg
         imageAlt: Brand creative work
         span: tall
         accent: gradient
@@ -152,8 +152,8 @@ pageSections:
           hit $2.1M in monthly revenue with a 4.8x blended ROAS.
         stat: "340%"
         statLabel: REVENUE GROWTH
-        imageSource: /src/assets/images/component-docs/sunset.jpg
-        imageAlt: Meridian Outdoors campaign
+        imageSource: /src/assets/images/component-docs/campaign-results.jpg
+        imageAlt: Meridian Outdoors campaign results
       - _component: page-sections/features/scroll-showcase/showcase-item
         eyebrow: CASE STUDY 02
         heading: "Vault Health: from 0 to 12K organic visitors/month"
@@ -164,7 +164,7 @@ pageSections:
           for 2,400+ keywords.
         stat: "12K"
         statLabel: MONTHLY VISITORS
-        imageSource: /src/assets/images/component-docs/castle.jpg
+        imageSource: /src/assets/images/component-docs/health-tech.jpg
         imageAlt: Vault Health results
       - _component: page-sections/features/scroll-showcase/showcase-item
         eyebrow: CASE STUDY 03
@@ -176,7 +176,7 @@ pageSections:
           content without developer tickets.
         stat: "2x"
         statLabel: CONVERSIONS
-        imageSource: /src/assets/images/component-docs/dunedin-cliff.jpg
+        imageSource: /src/assets/images/component-docs/startup-office.jpg
         imageAlt: Basecamp Labs website
     colorScheme: dark
     backgroundColor: surface
@@ -222,8 +222,8 @@ pageSections:
         link: /work/
         variant: tertiary
         size: lg
-    imageSource: /src/assets/images/component-docs/quiet-street.jpg
-    imageAlt: SIGNAL office
+    imageSource: /src/assets/images/component-docs/marketing-meeting.jpg
+    imageAlt: SIGNAL team meeting
     reverse: false
     colorScheme: dark
     backgroundColor: base

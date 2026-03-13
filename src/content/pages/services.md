@@ -29,7 +29,7 @@ pageSections:
         link: /contact/
         variant: primary
         size: md
-    imageSource: /src/assets/images/component-docs/quiet-street.jpg
+    imageSource: /src/assets/images/component-docs/campaign-results.jpg
     imageAlt: Performance marketing dashboard
     imageAspectRatio: landscape
     imageRounded: true
@@ -52,7 +52,7 @@ pageSections:
         link: /contact/
         variant: primary
         size: md
-    imageSource: /src/assets/images/component-docs/sheep.jpg
+    imageSource: /src/assets/images/component-docs/growth-chart.jpg
     imageAlt: SEO growth chart
     imageAspectRatio: landscape
     imageRounded: true
@@ -99,7 +99,7 @@ pageSections:
         variant: primary
         size: md
     imageSource: /src/assets/images/component-docs/castle.jpg
-    imageAlt: Website development
+    imageAlt: Website code on laptop
     imageAspectRatio: landscape
     imageRounded: true
     reverse: true
@@ -157,8 +157,8 @@ pageSections:
         link: /contact/
         variant: primary
         size: lg
-    imageSource: /src/assets/images/component-docs/sunset.jpg
-    imageAlt: Working together
+    imageSource: /src/assets/images/component-docs/quiet-street.jpg
+    imageAlt: Modern workspace
     colorScheme: dark
     backgroundColor: base
     paddingVertical: 6xl
