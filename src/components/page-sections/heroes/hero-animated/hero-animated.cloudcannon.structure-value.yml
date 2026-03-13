@@ -1,0 +1,23 @@
+label: Hero Animated
+icon: rocket_launch
+description: Interactive hero with 3D wireframe tower, rotating words, and animated background.
+value:
+  _component: page-sections/heroes/hero-animated
+  eyebrow: Eyebrow text
+  heading: Heading text
+  subtext: Subtext placeholder text that will be replaced with actual content.
+  rotatingWords: []
+  buttonSections: []
+  colorScheme: inherit
+  backgroundColor: base
+preview:
+  text:
+    - Hero Animated
+  subtext:
+    - key: heading
+  icon: rocket_launch
+picker_preview:
+  text: Hero Animated
+  subtext: Interactive hero with 3D tower animation and rotating words.
+_inputs_from_glob:
+  - /src/components/page-sections/heroes/hero-animated/hero-animated.cloudcannon.inputs.yml

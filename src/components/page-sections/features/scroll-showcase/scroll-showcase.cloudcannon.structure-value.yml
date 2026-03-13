@@ -1,0 +1,73 @@
+label: Scroll Showcase
+icon: view_carousel
+description: Alternating content and image panels with scroll-triggered animations.
+value:
+  _component: page-sections/features/scroll-showcase
+  eyebrow: Eyebrow text
+  heading: Heading text
+  subtext: Subtext placeholder text that will be replaced with actual content.
+  items: []
+  colorScheme: inherit
+  backgroundColor: base
+preview:
+  text:
+    - Scroll Showcase
+  subtext:
+    - key: heading
+  icon: view_carousel
+picker_preview:
+  text: Scroll Showcase
+  subtext: Alternating content and image panels with scroll animations.
+_inputs_from_glob:
+  - /src/components/page-sections/features/scroll-showcase/scroll-showcase.cloudcannon.inputs.yml
+_structures:
+  scrollShowcaseItems:
+    values:
+      - label: Showcase Panel
+        icon: view_carousel
+        value:
+          _component: page-sections/features/scroll-showcase/showcase-item
+          eyebrow: Panel eyebrow
+          heading: Panel heading
+          description: Panel description text.
+          imageSource:
+          imageAlt:
+          stat:
+          statLabel:
+        preview:
+          text:
+            - key: heading
+            - Showcase Panel
+          subtext:
+            - key: description
+          image:
+            - key: imageSource
+        _inputs:
+          eyebrow:
+            type: text
+            comment: Small label above the heading.
+          heading:
+            type: text
+            comment: Panel heading text.
+          description:
+            type: textarea
+            comment: Supporting description for the panel.
+          imageSource:
+            type: image
+            comment: Image displayed alongside the content.
+            options:
+              paths:
+                uploads: src/assets/images
+                static: ""
+              resize_style: contain
+              width: 1920
+              height: 1280
+          imageAlt:
+            type: text
+            comment: Alt text for the panel image.
+          stat:
+            type: text
+            comment: Large stat number (e.g. "340%").
+          statLabel:
+            type: text
+            comment: Label beneath the stat number.

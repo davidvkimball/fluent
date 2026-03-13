@@ -1,0 +1,97 @@
+label: Bento Grid
+icon: grid_view
+description: Interactive card grid with accent colors, stats, and images.
+value:
+  _component: page-sections/features/bento-grid
+  eyebrow: Eyebrow text
+  heading: Heading text
+  subtext: Subtext placeholder text that will be replaced with actual content.
+  items: []
+  colorScheme: inherit
+  backgroundColor: base
+preview:
+  text:
+    - Bento Grid
+  subtext:
+    - key: heading
+  icon: grid_view
+picker_preview:
+  text: Bento Grid
+  subtext: Interactive card grid with accent colors, stats, and images.
+_inputs_from_glob:
+  - /src/components/page-sections/features/bento-grid/bento-grid.cloudcannon.inputs.yml
+_structures:
+  bentoGridItems:
+    values:
+      - label: Bento Item
+        icon: dashboard
+        value:
+          _component: page-sections/features/bento-grid/bento-item
+          heading: Card heading
+          description: Card description text.
+          imageSource:
+          imageAlt:
+          span: normal
+          accent: none
+          stat:
+          statLabel:
+        preview:
+          text:
+            - key: heading
+            - Bento Item
+          subtext:
+            - key: description
+          image:
+            - key: imageSource
+        _inputs:
+          heading:
+            type: text
+            comment: Card heading text.
+          description:
+            type: textarea
+            comment: Supporting description for the card.
+          imageSource:
+            type: image
+            comment: Background image for the card.
+            options:
+              paths:
+                uploads: src/assets/images
+                static: ""
+              resize_style: contain
+              width: 1920
+              height: 1280
+          imageAlt:
+            type: text
+            comment: Alt text for the card image.
+          span:
+            type: select
+            comment: How many grid cells this card spans.
+            options:
+              values:
+                - id: normal
+                  name: Normal (1x1)
+                - id: wide
+                  name: Wide (2x1)
+                - id: tall
+                  name: Tall (1x2)
+                - id: large
+                  name: Large (2x2)
+          accent:
+            type: select
+            comment: Accent color for the top edge glow.
+            options:
+              values:
+                - id: none
+                  name: None
+                - id: cyan
+                  name: Cyan
+                - id: coral
+                  name: Coral
+                - id: gradient
+                  name: Gradient
+          stat:
+            type: text
+            comment: Large stat number (e.g. "340%").
+          statLabel:
+            type: text
+            comment: Label beneath the stat number.
