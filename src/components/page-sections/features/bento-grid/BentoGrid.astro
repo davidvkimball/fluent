@@ -65,12 +65,12 @@ const {
     />
   </div>
 
-  <div class="bento-grid__layout" data-editable="array" data-prop="items" data-component-key="_component">
+  <div class="bento-grid__layout" data-editable="array" data-prop="items">
     {items.map((item: BentoItem, i: number) => {
       const spanClass = item.span ? `bento-grid__item--${item.span}` : "";
       const accentClass = item.accent && item.accent !== "none" ? `bento-grid__item--accent-${item.accent}` : "";
       return (
-        <div class:list={["bento-grid__item", spanClass, accentClass]} style={`--item-index: ${i}`} data-id="page-sections/features/bento-grid/bento-item">
+        <div class:list={["bento-grid__item", spanClass, accentClass]} style={`--item-index: ${i}`} data-editable="array-item">
           <div class="bento-grid__item-inner">
             {item.stat && (
               <div class="bento-grid__stat-block">
