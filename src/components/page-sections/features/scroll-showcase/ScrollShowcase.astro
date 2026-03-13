@@ -63,9 +63,9 @@ const {
     />
   </div>
 
-  <div class="scroll-showcase__track" data-children-prop="items">
+  <div class="scroll-showcase__track" data-editable="array" data-prop="items">
     {items.map((item: ShowcaseItem, i: number) => (
-      <div class="scroll-showcase__panel" data-panel-index={i} data-id="page-sections/features/scroll-showcase/showcase-item" data-editable="array-item">
+      <div class="scroll-showcase__panel" data-panel-index={i} data-id="page-sections/features/scroll-showcase/showcase-item">
         <div class="scroll-showcase__panel-content">
           {item.eyebrow && (
             <span class="scroll-showcase__panel-eyebrow" data-prop="eyebrow">{item.eyebrow}</span>

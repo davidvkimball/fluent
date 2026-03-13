@@ -1,10 +1,8 @@
 ---
 import CustomSection from "@builders/custom-section/CustomSection.astro";
 import Heading from "@core-elements/heading/Heading.astro";
-import Image from "@core-elements/image/Image.astro";
 import Text from "@core-elements/text/Text.astro";
 import Form from "@forms/form/Form.astro";
-import Split from "@wrappers/split/Split.astro";
 
 const {
   heading = "",
@@ -27,7 +25,7 @@ const {
 
 <CustomSection
   class:list={["cta-form", className]}
-  maxContentWidth="2xl"
+  maxContentWidth="md"
   paddingHorizontal="lg"
   paddingVertical={paddingVertical}
   colorScheme={colorScheme}
@@ -36,41 +34,38 @@ const {
   useDefaultEditableBinding={useDefaultEditableBinding}
   {...htmlAttributes}
 >
-  <Split
-    class="split"
-    distributionMode="fixed-flexible"
-    fixedWidth="400"
-    verticalAlignment="center"
-    reverse={reverse}
-    minSplitWidth={640}
-  >
-    <Fragment slot="first">
-      <Heading
-        level="h2"
-        size="lg"
-        data-prop="heading"
-      >
-        {heading}
-      </Heading>
-      <Text
-        data-prop="subtext"
-        text={subtext}
-      />
-      <Form
-        action={formAction}
-        data-children-prop="formBlocks"
-        formBlocks={formBlocks}
-      />
-    </Fragment>
-    <Fragment slot="second">
-      <Image
-        source={imageSource}
-        rounded={true}
-        alt={imageAlt}
-        aspectRatio="landscape"
-        data-prop-src="imageSource"
-        data-prop-alt="imageAlt"
-      />
-    </Fragment>
-  </Split>
+  <div class="cta-form__inner">
+    <Heading
+      level="h2"
+      size="lg"
+      alignX="center"
+      data-prop="heading"
+    >
+      {heading}
+    </Heading>
+    <Text
+      class="cta-form__subtext"
+      alignX="center"
+      data-prop="subtext"
+      text={subtext}
+    />
+    <Form
+      action={formAction}
+      data-children-prop="formBlocks"
+      formBlocks={formBlocks}
+    />
+  </div>
 </CustomSection>
+
+<style>
+  @layer page-sections {
+    .cta-form__inner {
+      max-width: 560px;
+      margin-inline: auto;
+    }
+
+    :global(.cta-form__subtext) {
+      margin-bottom: var(--spacing-xl);
+    }
+  }
+</style>

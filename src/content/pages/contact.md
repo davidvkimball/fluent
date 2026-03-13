@@ -58,8 +58,8 @@ pageSections:
         text: Send Message
         variant: primary
         size: md
-    imageSource: /src/assets/images/component-docs/sheep.jpg
-    imageAlt: Get in touch with SIGNAL
+    imageSource:
+    imageAlt:
     reverse: false
     colorScheme: dark
     backgroundColor: surface
