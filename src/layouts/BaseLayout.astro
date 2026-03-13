@@ -103,6 +103,9 @@ const pageImage = props.image || seoData.logoSource;
     <div>
       <slot />
     </div>
+    <button class="scroll-top" id="scroll-top-btn" aria-label="Scroll to top" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
     <script>
       import "@choctawnationofoklahoma/lite-vimeo";
       import "@justinribeiro/lite-youtube";
@@ -129,17 +132,26 @@ const pageImage = props.image || seoData.logoSource;
           }
         });
 
-        // Scroll progress bar
+        // Scroll progress bar + scroll-to-top button
         const bar = document.querySelector(".scroll-progress__bar") as HTMLElement;
-        if (bar) {
-          const updateProgress = () => {
-            const scrollTop = window.scrollY;
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollBtn = document.getElementById("scroll-top-btn");
+        const onScroll = () => {
+          const scrollTop = window.scrollY;
+          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          if (bar) {
             const progress = docHeight > 0 ? scrollTop / docHeight : 0;
             bar.style.transform = `scaleX(${progress})`;
-          };
-          window.addEventListener("scroll", updateProgress, { passive: true });
-          updateProgress();
+          }
+          if (scrollBtn) {
+            scrollBtn.classList.toggle("visible", scrollTop > 400);
+          }
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
+        if (scrollBtn) {
+          scrollBtn.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
         }
 
       }

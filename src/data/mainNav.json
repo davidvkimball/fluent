@@ -1,33 +1,7 @@
 {
   "logoSource": "/images/logo-dark.svg",
   "logoAlt": "SIGNAL",
-  "navData": [
-    {
-      "name": "Home",
-      "path": "/",
-      "children": []
-    },
-    {
-      "name": "Services",
-      "path": "/services/",
-      "children": []
-    },
-    {
-      "name": "Work",
-      "path": "/work/",
-      "children": []
-    },
-    {
-      "name": "About",
-      "path": "/about/",
-      "children": []
-    },
-    {
-      "name": "Blog",
-      "path": "/blog/",
-      "children": []
-    }
-  ],
+  "navData": [],
   "buttonSections": [
     {
       "_component": "building-blocks/core-elements/button",

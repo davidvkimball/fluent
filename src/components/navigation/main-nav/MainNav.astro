@@ -149,9 +149,12 @@ const mobileNavData = [
       .cmd-trigger {
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 8px;
-        padding: 6px 12px;
-        border-radius: 8px;
+        flex: 1;
+        max-width: 480px;
+        padding: 8px 16px;
+        border-radius: 10px;
         border: 1px solid var(--color-border);
         background: rgba(255, 255, 255, 0.03);
         color: var(--color-text-subtle);
@@ -181,6 +184,7 @@ const mobileNavData = [
         border: 1px solid rgba(255, 255, 255, 0.08);
         opacity: 0.5;
         line-height: 1;
+        margin-left: auto;
       }
 
       [data-theme="light"] .cmd-trigger {
@@ -192,14 +196,15 @@ const mobileNavData = [
         border-color: rgba(0, 0, 0, 0.1);
       }
 
-      @container (max-width: 768px) {
-        .cmd-trigger__text,
-        .cmd-trigger__kbd {
+      @container (max-width: 480px) {
+        .cmd-trigger__text {
           display: none;
         }
 
         .cmd-trigger {
-          padding: 6px;
+          max-width: none;
+          flex: 0;
+          padding: 8px;
         }
       }
 

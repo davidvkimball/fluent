@@ -80,26 +80,17 @@ const wordsJson = JSON.stringify(rotatingWords);
 
     <!-- 3D Element -->
     <div class="hero-animated__visual" aria-hidden="true">
-      <!-- Back ring halves (behind cube) -->
+      <!-- Back ring halves (behind tower) -->
       <div class="hero-animated__ring-layer hero-animated__ring-layer--back">
         <div class="hero-animated__ring hero-animated__ring--1"></div>
         <div class="hero-animated__ring hero-animated__ring--2"></div>
         <div class="hero-animated__ring hero-animated__ring--3"></div>
       </div>
-      <!-- Cube in its own flat stacking layer -->
-      <div class="hero-animated__cube-wrap">
-        <div class="hero-animated__cube" id="hero-cube">
-          <div class="hero-animated__cube-face hero-animated__cube-face--front">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--brand-cyan)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.247 7.761a6 6 0 0 1 0 8.478"/><path d="M19.075 4.933a10 10 0 0 1 0 14.134"/><path d="M4.925 19.067a10 10 0 0 1 0-14.134"/><path d="M7.753 16.239a6 6 0 0 1 0-8.478"/><circle cx="12" cy="12" r="2"/></svg>
-          </div>
-          <div class="hero-animated__cube-face hero-animated__cube-face--back"></div>
-          <div class="hero-animated__cube-face hero-animated__cube-face--right"></div>
-          <div class="hero-animated__cube-face hero-animated__cube-face--left"></div>
-          <div class="hero-animated__cube-face hero-animated__cube-face--top"></div>
-          <div class="hero-animated__cube-face hero-animated__cube-face--bottom"></div>
-        </div>
+      <!-- 3D Wireframe Tower (canvas-rendered) -->
+      <div class="hero-animated__tower-wrap">
+        <canvas class="hero-animated__tower-canvas" id="hero-tower-canvas" width="500" height="600"></canvas>
       </div>
-      <!-- Front ring halves (in front of cube) -->
+      <!-- Front ring halves (in front of tower) -->
       <div class="hero-animated__ring-layer hero-animated__ring-layer--front">
         <div class="hero-animated__ring hero-animated__ring--1"></div>
         <div class="hero-animated__ring hero-animated__ring--2"></div>
@@ -142,15 +133,179 @@ const wordsJson = JSON.stringify(rotatingWords);
       }, 3000);
     });
 
-    // 3D cube: scroll + drag + sparks + glitch
-    const cube = document.getElementById('hero-cube');
-    const visual = cube?.closest('.hero-animated__visual') as HTMLElement | null;
+    // 3D wireframe tower — canvas rendered
+    const canvas = document.getElementById('hero-tower-canvas') as HTMLCanvasElement | null;
+    const visual = canvas?.closest('.hero-animated__visual') as HTMLElement | null;
     const spark = visual?.querySelector('.hero-animated__spark') as HTMLElement | null;
-    if (cube && !cube.dataset.scrollInit) {
-      cube.dataset.scrollInit = 'true';
+    const ctx = canvas?.getContext('2d');
+    if (canvas && ctx && !canvas.dataset.init) {
+      canvas.dataset.init = 'true';
 
-      let baseX = -15;
-      let baseY = 25;
+      // Tower geometry — vertices [x, y, z]
+      const S = 1.55; // scale
+      const V: number[][] = [];
+      const E: number[][] = []; // edges [i, j, opacity, width, r, g, b]
+
+      // Helper: add 4 corners of a square platform at height y, half-width hw
+      function addPlatform(y: number, hw: number): number {
+        const base = V.length;
+        V.push([-hw, y, -hw], [hw, y, -hw], [hw, y, hw], [-hw, y, hw]);
+        // horizontal edges
+        for (let i = 0; i < 4; i++) E.push([base + i, base + (i + 1) % 4, 0.3, 1, 0, 229, 255]);
+        return base;
+      }
+
+      // Platforms (bottom to top)
+      const p0 = addPlatform(-150 * S, 70 * S); // base
+      const p1 = addPlatform(-70 * S, 54 * S);  // tier 1
+      const p2 = addPlatform(5 * S, 38 * S);    // tier 2
+      const p3 = addPlatform(65 * S, 24 * S);   // tier 3
+      const p4 = addPlatform(100 * S, 10 * S);  // antenna base
+
+      // Vertical pillars between tiers
+      function addPillars(a: number, b: number, opacity: number) {
+        for (let i = 0; i < 4; i++) E.push([a + i, b + i, opacity, 1.2, 0, 229, 255]);
+      }
+      addPillars(p0, p1, 0.4);
+      addPillars(p1, p2, 0.45);
+      addPillars(p2, p3, 0.5);
+      addPillars(p3, p4, 0.45);
+
+      // Cross-braces on each face of each tier
+      function addCrossBraces(a: number, b: number) {
+        // 4 faces: 0-1, 1-2, 2-3, 3-0
+        for (let i = 0; i < 4; i++) {
+          const j = (i + 1) % 4;
+          E.push([a + i, b + j, 0.1, 0.5, 0, 229, 255]);
+          E.push([a + j, b + i, 0.1, 0.5, 0, 229, 255]);
+        }
+      }
+      addCrossBraces(p0, p1);
+      addCrossBraces(p1, p2);
+      addCrossBraces(p2, p3);
+
+      // Mid-tier horizontal rings (extra detail)
+      addPlatform(-110 * S, 62 * S);
+      addPlatform(-32 * S, 46 * S);
+      addPlatform(35 * S, 31 * S);
+
+      // Antenna mast
+      const mast0 = V.length; V.push([0, 100 * S, 0]);
+      const mast1 = V.length; V.push([0, 150 * S, 0]);
+      E.push([mast0, mast1, 0.6, 1.5, 0, 229, 255]);
+
+      // Antenna arms
+      const a1l = V.length; V.push([-18 * S, 115 * S, 0]);
+      const a1r = V.length; V.push([18 * S, 115 * S, 0]);
+      const a1f = V.length; V.push([0, 115 * S, -18 * S]);
+      const a1b = V.length; V.push([0, 115 * S, 18 * S]);
+      E.push([a1l, a1r, 0.4, 0.8, 0, 229, 255]);
+      E.push([a1f, a1b, 0.4, 0.8, 0, 229, 255]);
+
+      const a2l = V.length; V.push([-12 * S, 130 * S, 0]);
+      const a2r = V.length; V.push([12 * S, 130 * S, 0]);
+      const a2f = V.length; V.push([0, 130 * S, -12 * S]);
+      const a2b = V.length; V.push([0, 130 * S, 12 * S]);
+      E.push([a2l, a2r, 0.3, 0.6, 0, 229, 255]);
+      E.push([a2f, a2b, 0.3, 0.6, 0, 229, 255]);
+
+      // Coral accent struts (antenna supports)
+      E.push([p4, mast0, 0.15, 0.5, 255, 107, 107]);
+      E.push([p4 + 2, mast0, 0.15, 0.5, 255, 107, 107]);
+
+      // 3D math
+      const DEG = Math.PI / 180;
+      function rotY(p: number[], a: number): number[] {
+        const c = Math.cos(a), s = Math.sin(a);
+        return [p[0]*c - p[2]*s, p[1], p[0]*s + p[2]*c];
+      }
+      function rotX(p: number[], a: number): number[] {
+        const c = Math.cos(a), s = Math.sin(a);
+        return [p[0], p[1]*c - p[2]*s, p[1]*s + p[2]*c];
+      }
+      function project(p: number[]): number[] {
+        const persp = 900;
+        const scale = persp / (persp + p[2]);
+        return [p[0] * scale, p[1] * scale, scale];
+      }
+
+      let beaconPhase = 0;
+
+      function drawTower(rx: number, ry: number) {
+        const w = canvas!.width;
+        const h = canvas!.height;
+        const cx = w / 2;
+        const cy = h / 2 - 10;
+        ctx!.clearRect(0, 0, w, h);
+
+        const rxr = rx * DEG;
+        const ryr = ry * DEG;
+
+        // Transform all vertices
+        const projected = V.map(v => {
+          let p = rotY(v, ryr);
+          p = rotX(p, rxr);
+          return project(p);
+        });
+
+        // Sort edges by average depth (back to front)
+        const sortedEdges = E.map((e, i) => {
+          const z = (projected[e[0]][2] + projected[e[1]][2]) / 2;
+          return { idx: i, z };
+        }).sort((a, b) => a.z - b.z);
+
+        // Draw edges
+        for (const { idx } of sortedEdges) {
+          const e = E[idx];
+          const a = projected[e[0]];
+          const b = projected[e[1]];
+          const depthFade = Math.min(a[2], b[2]);
+          const opacity = (e[2] as number) * Math.max(0.3, Math.min(1, depthFade * 1.2));
+          ctx!.beginPath();
+          ctx!.moveTo(cx + a[0], cy - a[1]);
+          ctx!.lineTo(cx + b[0], cy - b[1]);
+          ctx!.strokeStyle = `rgba(${e[4]},${e[5]},${e[6]},${opacity})`;
+          ctx!.lineWidth = e[3] as number;
+          ctx!.stroke();
+        }
+
+        // Draw vertex dots at platform corners
+        for (let i = 0; i <= p4 + 3; i++) {
+          const p = projected[i];
+          const r = i <= p0 + 3 ? 2 : 1.5;
+          ctx!.beginPath();
+          ctx!.arc(cx + p[0], cy - p[1], r * p[2], 0, Math.PI * 2);
+          ctx!.fillStyle = `rgba(0,229,255,${0.3 * p[2]})`;
+          ctx!.fill();
+        }
+
+        // Beacon at antenna tip
+        beaconPhase += 0.03;
+        const bp = projected[mast1];
+        const beaconAlpha = 0.4 + 0.5 * Math.sin(beaconPhase);
+        // Glow
+        ctx!.beginPath();
+        ctx!.arc(cx + bp[0], cy - bp[1], 12, 0, Math.PI * 2);
+        ctx!.fillStyle = `rgba(0,229,255,${beaconAlpha * 0.08})`;
+        ctx!.fill();
+        // Ring
+        const ringSize = 4 + 6 * ((Math.sin(beaconPhase) + 1) / 2);
+        const ringAlpha = 0.3 * (1 - (ringSize - 4) / 6);
+        ctx!.beginPath();
+        ctx!.arc(cx + bp[0], cy - bp[1], ringSize, 0, Math.PI * 2);
+        ctx!.strokeStyle = `rgba(0,229,255,${ringAlpha})`;
+        ctx!.lineWidth = 0.8;
+        ctx!.stroke();
+        // Dot
+        ctx!.beginPath();
+        ctx!.arc(cx + bp[0], cy - bp[1], 3, 0, Math.PI * 2);
+        ctx!.fillStyle = `rgba(0,229,255,${beaconAlpha})`;
+        ctx!.fill();
+      }
+
+      // Interaction state
+      let baseX = -12;
+      let baseY = 20;
       let dragX = 0;
       let dragY = 0;
       let velocityX = 0;
@@ -165,8 +320,8 @@ const wordsJson = JSON.stringify(rotatingWords);
       let lastMoveTime = 0;
       let animating = false;
       let sparkTimeout: number | null = null;
+      let rafId = 0;
 
-      // Keep angles in -180..180 range to prevent inverted controls
       function normalizeAngle(a: number): number {
         a = a % 360;
         if (a > 180) a -= 360;
@@ -178,68 +333,61 @@ const wordsJson = JSON.stringify(rotatingWords);
         if (!spark || !visual) return;
         if (speed < 1.5) return;
         const rect = visual.getBoundingClientRect();
-        const cx = rect.width / 2;
-        const cy = rect.height / 2;
+        const cxx = rect.width / 2;
+        const cyy = rect.height / 2;
         const angle = Math.random() * Math.PI * 2;
         const dist = 100 + Math.random() * 40;
-        spark.style.left = `${cx + Math.cos(angle) * dist}px`;
-        spark.style.top = `${cy + Math.sin(angle) * dist}px`;
+        spark.style.left = `${cxx + Math.cos(angle) * dist}px`;
+        spark.style.top = `${cyy + Math.sin(angle) * dist}px`;
         spark.style.opacity = `${Math.min(speed / 8, 0.8)}`;
         if (sparkTimeout) clearTimeout(sparkTimeout);
-        sparkTimeout = window.setTimeout(() => {
-          spark.style.opacity = '0';
-        }, 80 + Math.random() * 60);
+        sparkTimeout = window.setTimeout(() => { spark.style.opacity = '0'; }, 80 + Math.random() * 60);
       }
 
-      function updateCube() {
+      function update() {
         const scrollY = window.scrollY;
-        const scrollRX = scrollY * 0.03;
-        const scrollRY = scrollY * 0.05;
-        const rx = baseX + scrollRX + dragX;
-        const ry = baseY + scrollRY + dragY;
-        cube!.style.transform = `perspective(1800px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+        const rx = baseX + scrollY * 0.03 + dragX;
+        const ry = baseY + scrollY * 0.05 + dragY;
+        drawTower(rx, ry);
       }
+
+      // Idle animation loop for beacon pulse
+      function idleLoop() {
+        if (!animating && !isDragging) update();
+        rafId = requestAnimationFrame(idleLoop);
+      }
+      rafId = requestAnimationFrame(idleLoop);
 
       function animateMomentum() {
         if (isDragging) { animating = false; return; }
         const speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-        if (speed < 0.05) {
-          animating = false;
-          return;
-        }
+        if (speed < 0.05) { animating = false; return; }
         dragX += velocityX;
         dragY += velocityY;
         dragX = normalizeAngle(dragX);
         dragY = normalizeAngle(dragY);
         velocityX *= 0.95;
         velocityY *= 0.95;
-
-        // Cap velocity to prevent extreme spin
         const maxV = 8;
         velocityX = Math.max(-maxV, Math.min(maxV, velocityX));
         velocityY = Math.max(-maxV, Math.min(maxV, velocityY));
-
         if (Math.random() < 0.3) emitSpark(speed);
-        updateCube();
+        update();
         requestAnimationFrame(animateMomentum);
       }
 
-      window.addEventListener('scroll', updateCube, { passive: true });
+      window.addEventListener('scroll', update, { passive: true });
 
-      const target = visual || cube;
+      const target = visual || canvas;
       target.style.cursor = 'grab';
 
       target.addEventListener('pointerdown', (e: PointerEvent) => {
         isDragging = true;
-        velocityX = 0;
-        velocityY = 0;
-        startMouseX = e.clientX;
-        startMouseY = e.clientY;
-        lastMouseX = e.clientX;
-        lastMouseY = e.clientY;
+        velocityX = 0; velocityY = 0;
+        startMouseX = e.clientX; startMouseY = e.clientY;
+        lastMouseX = e.clientX; lastMouseY = e.clientY;
         lastMoveTime = Date.now();
-        startDragX = dragX;
-        startDragY = dragY;
+        startDragX = dragX; startDragY = dragY;
         target.style.cursor = 'grabbing';
         target.setPointerCapture(e.pointerId);
         e.preventDefault();
@@ -247,42 +395,28 @@ const wordsJson = JSON.stringify(rotatingWords);
 
       window.addEventListener('pointermove', (e: PointerEvent) => {
         if (!isDragging) return;
-        const dx = e.clientX - startMouseX;
-        const dy = e.clientY - startMouseY;
-        dragY = normalizeAngle(startDragY + dx * 0.3);
-        dragX = normalizeAngle(startDragX - dy * 0.3);
-
+        dragY = normalizeAngle(startDragY + (e.clientX - startMouseX) * 0.3);
+        dragX = normalizeAngle(startDragX - (e.clientY - startMouseY) * 0.3);
         const now = Date.now();
         const dt = Math.max(now - lastMoveTime, 1);
         velocityY = (e.clientX - lastMouseX) / dt * 8;
         velocityX = -(e.clientY - lastMouseY) / dt * 8;
-
-        // Cap velocity during drag too
         const maxV = 8;
         velocityX = Math.max(-maxV, Math.min(maxV, velocityX));
         velocityY = Math.max(-maxV, Math.min(maxV, velocityY));
-
-        const speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-        if (Math.random() < 0.4) emitSpark(speed);
-
-        lastMouseX = e.clientX;
-        lastMouseY = e.clientY;
-        lastMoveTime = now;
-
-        updateCube();
+        if (Math.random() < 0.4) emitSpark(Math.sqrt(velocityX*velocityX+velocityY*velocityY));
+        lastMouseX = e.clientX; lastMouseY = e.clientY; lastMoveTime = now;
+        update();
       });
 
       window.addEventListener('pointerup', () => {
         if (!isDragging) return;
         isDragging = false;
         target.style.cursor = 'grab';
-        if (!animating) {
-          animating = true;
-          requestAnimationFrame(animateMomentum);
-        }
+        if (!animating) { animating = true; requestAnimationFrame(animateMomentum); }
       });
 
-      updateCube();
+      update();
     }
   }
 
@@ -480,7 +614,7 @@ const wordsJson = JSON.stringify(rotatingWords);
       align-items: center;
       justify-content: center;
       position: relative;
-      height: 500px;
+      height: 600px;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
@@ -502,75 +636,49 @@ const wordsJson = JSON.stringify(rotatingWords);
       clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
     }
 
-    /* Cube wrapper — sits between ring layers */
-    .hero-animated__cube-wrap {
+    /* Tower wrapper */
+    .hero-animated__tower-wrap {
       position: relative;
       z-index: 2;
-      perspective: none;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    /* Cube */
-    .hero-animated__cube {
-      width: 240px;
-      height: 240px;
-      position: relative;
-      transform-style: preserve-3d;
-      transform: perspective(1800px) rotateX(-15deg) rotateY(25deg);
-      will-change: transform;
+    .hero-animated__tower-canvas {
+      display: block;
     }
-
-    .hero-animated__cube-face {
-      position: absolute;
-      width: 240px;
-      height: 240px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1.5px solid rgba(0, 229, 255, 0.18);
-      background: rgba(0, 229, 255, 0.02);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      box-shadow: inset 0 0 30px rgba(0, 229, 255, 0.03);
-    }
-
-    .hero-animated__cube-face--front  { transform: translateZ(120px); border-color: rgba(0, 229, 255, 0.25); }
-    .hero-animated__cube-face--back   { transform: rotateY(180deg) translateZ(120px); }
-    .hero-animated__cube-face--right  { transform: rotateY(90deg) translateZ(120px); }
-    .hero-animated__cube-face--left   { transform: rotateY(-90deg) translateZ(120px); }
-    .hero-animated__cube-face--top    { transform: rotateX(90deg) translateZ(120px); }
-    .hero-animated__cube-face--bottom { transform: rotateX(-90deg) translateZ(120px); }
 
     /* Orbiting rings */
     .hero-animated__ring {
       position: absolute;
       border-radius: 50%;
-      border: 1.5px solid rgba(0, 229, 255, 0.12);
+      border: 1.5px solid rgba(0, 229, 255, 0.3);
       top: 50%;
       left: 50%;
     }
 
     .hero-animated__ring--1 {
-      width: 380px;
-      height: 380px;
+      width: 440px;
+      height: 440px;
       animation: ring-spin-1 20s linear infinite;
+      border-width: 2px;
     }
 
     .hero-animated__ring--2 {
-      width: 340px;
-      height: 340px;
+      width: 390px;
+      height: 390px;
       animation: ring-spin-2 16s linear infinite;
-      border-color: rgba(255, 107, 107, 0.08);
+      border-color: rgba(255, 107, 107, 0.2);
+      border-width: 1.5px;
     }
 
     .hero-animated__ring--3 {
-      width: 420px;
-      height: 420px;
+      width: 500px;
+      height: 500px;
       animation: ring-spin-3 24s linear infinite;
       border-style: dashed;
-      border-color: rgba(0, 229, 255, 0.06);
+      border-color: rgba(0, 229, 255, 0.15);
     }
 
     @keyframes ring-spin-1 {

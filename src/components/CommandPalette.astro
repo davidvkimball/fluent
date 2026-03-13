@@ -74,10 +74,7 @@ const searchDataJson = JSON.stringify(searchItems);
     post: { label: "Articles", icon: "▤" },
   };
 
-  const ACTIONS = [
-    { title: "Go to top", description: "Scroll to the top of the page", category: "action", action: "scroll-top" },
-    { title: "Contact us", description: "Start a project with SIGNAL", category: "action", url: "/contact/" },
-  ];
+  const ACTIONS: any[] = [];
 
   function fuzzyMatch(query: string, text: string): { score: number; indices: number[] } {
     const q = query.toLowerCase();
