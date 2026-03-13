@@ -88,8 +88,7 @@ pageSections:
       Strategy to execution. We do not hand you a PDF and wish you luck.
       Every engagement ships real work that drives real numbers.
     items:
-      - _component: page-sections/features/bento-grid/bento-item
-        heading: Performance Marketing
+      - heading: Performance Marketing
         description: >-
           Paid search, paid social, programmatic. We manage seven-figure
           budgets and obsess over ROAS so you do not have to.
@@ -97,14 +96,12 @@ pageSections:
         accent: cyan
         stat: "48x"
         statLabel: BEST ROAS
-      - _component: page-sections/features/bento-grid/bento-item
-        heading: SEO & Content
+      - heading: SEO & Content
         description: >-
           Technical SEO audits, content strategy, link building. Organic
           traffic that compounds month over month.
         accent: coral
-      - _component: page-sections/features/bento-grid/bento-item
-        heading: Brand & Creative
+      - heading: Brand & Creative
         description: >-
           Visual identity, messaging frameworks, campaign creative. Brands
           people recognize before they read the logo.
@@ -112,22 +109,19 @@ pageSections:
         imageAlt: Brand creative work
         span: tall
         accent: gradient
-      - _component: page-sections/features/bento-grid/bento-item
-        heading: Web Development
+      - heading: Web Development
         description: >-
           Fast, conversion-optimized websites built on modern stacks. No
           WordPress themes. No page builders. Clean code.
         accent: cyan
-      - _component: page-sections/features/bento-grid/bento-item
-        heading: Email & Lifecycle
+      - heading: Email & Lifecycle
         description: >-
           Automated flows, segmentation, deliverability. Turn one-time buyers
           into repeat customers without burning your list.
         stat: "97%"
         statLabel: RETENTION
         accent: coral
-      - _component: page-sections/features/bento-grid/bento-item
-        heading: Analytics & CRO
+      - heading: Analytics & CRO
         description: >-
           GA4 setups, conversion tracking, A/B testing. Decisions backed by
           data, not gut feelings and vanity metrics.
@@ -142,8 +136,7 @@ pageSections:
     subtext: >-
       We do not talk about what we could do. Here is what we have done.
     items:
-      - _component: page-sections/features/scroll-showcase/showcase-item
-        eyebrow: CASE STUDY 01
+      - eyebrow: CASE STUDY 01
         heading: "Meridian Outdoors: 340% revenue growth in 9 months"
         description: >-
           Meridian came to us spending $40K/month on Meta ads with a 1.2x ROAS.
@@ -154,8 +147,7 @@ pageSections:
         statLabel: REVENUE GROWTH
         imageSource: /src/assets/images/component-docs/campaign-results.jpg
         imageAlt: Meridian Outdoors campaign results
-      - _component: page-sections/features/scroll-showcase/showcase-item
-        eyebrow: CASE STUDY 02
+      - eyebrow: CASE STUDY 02
         heading: "Vault Health: from 0 to 12K organic visitors/month"
         description: >-
           A telehealth startup with zero organic presence. We built their
@@ -166,8 +158,7 @@ pageSections:
         statLabel: MONTHLY VISITORS
         imageSource: /src/assets/images/component-docs/health-tech.jpg
         imageAlt: Vault Health results
-      - _component: page-sections/features/scroll-showcase/showcase-item
-        eyebrow: CASE STUDY 03
+      - eyebrow: CASE STUDY 03
         heading: "Basecamp Labs: 6-week website rebuild, 2x conversions"
         description: >-
           Their old WordPress site loaded in 8 seconds and converted at 0.4%.

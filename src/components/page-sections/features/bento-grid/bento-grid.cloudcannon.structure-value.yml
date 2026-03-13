@@ -26,7 +26,6 @@ _structures:
       - label: Bento Item
         icon: dashboard
         value:
-          _component: page-sections/features/bento-grid/bento-item
           heading: Card heading
           description: Card description text.
           imageSource:

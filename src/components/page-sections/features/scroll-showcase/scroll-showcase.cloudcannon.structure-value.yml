@@ -26,7 +26,6 @@ _structures:
       - label: Showcase Panel
         icon: view_carousel
         value:
-          _component: page-sections/features/scroll-showcase/showcase-item
           eyebrow: Panel eyebrow
           heading: Panel heading
           description: Panel description text.
