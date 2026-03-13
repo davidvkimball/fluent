@@ -190,6 +190,7 @@ pageSections:
       in under a year.
     authorName: Rachel Torres
     authorDescription: CEO, Meridian Outdoors
+    authorImage: /src/assets/images/component-docs/reviewer-rachel.jpg
     colorScheme: dark
     backgroundColor: base
     paddingVertical: 4xl
@@ -201,6 +202,7 @@ pageSections:
       everything. That honesty has saved us hundreds of thousands.
     authorName: James Liu
     authorDescription: VP Marketing, Vault Health
+    authorImage: /src/assets/images/component-docs/reviewer-james.jpg
     colorScheme: dark
     backgroundColor: surface
     paddingVertical: 4xl

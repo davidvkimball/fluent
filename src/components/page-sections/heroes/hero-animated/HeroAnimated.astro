@@ -147,20 +147,24 @@ const wordsJson = JSON.stringify(rotatingWords);
       const E: number[][] = []; // edges [i, j, opacity, width, r, g, b]
 
       // Helper: add 4 corners of a square platform at height y, half-width hw
-      function addPlatform(y: number, hw: number): number {
+      function addPlatform(y: number, hw: number, opacity = 0.3, width = 1): number {
         const base = V.length;
         V.push([-hw, y, -hw], [hw, y, -hw], [hw, y, hw], [-hw, y, hw]);
-        // horizontal edges
-        for (let i = 0; i < 4; i++) E.push([base + i, base + (i + 1) % 4, 0.3, 1, 0, 229, 255]);
+        for (let i = 0; i < 4; i++) E.push([base + i, base + (i + 1) % 4, opacity, width, 0, 229, 255]);
         return base;
       }
 
-      // Platforms (bottom to top)
-      const p0 = addPlatform(-150 * S, 70 * S); // base
-      const p1 = addPlatform(-70 * S, 54 * S);  // tier 1
-      const p2 = addPlatform(5 * S, 38 * S);    // tier 2
-      const p3 = addPlatform(65 * S, 24 * S);   // tier 3
-      const p4 = addPlatform(100 * S, 10 * S);  // antenna base
+      // Helper: interpolate position between two platforms at a fraction t
+      function lerpHW(hw0: number, hw1: number, t: number): number {
+        return hw0 + (hw1 - hw0) * t;
+      }
+
+      // Major platforms (bottom to top)
+      const p0 = addPlatform(-150 * S, 70 * S, 0.4, 1.2); // base
+      const p1 = addPlatform(-70 * S, 54 * S, 0.35, 1);   // tier 1
+      const p2 = addPlatform(5 * S, 38 * S, 0.35, 1);     // tier 2
+      const p3 = addPlatform(65 * S, 24 * S, 0.35, 1);    // tier 3
+      const p4 = addPlatform(100 * S, 10 * S, 0.3, 1);    // antenna base
 
       // Vertical pillars between tiers
       function addPillars(a: number, b: number, opacity: number) {
@@ -171,47 +175,152 @@ const wordsJson = JSON.stringify(rotatingWords);
       addPillars(p2, p3, 0.5);
       addPillars(p3, p4, 0.45);
 
-      // Cross-braces on each face of each tier
-      function addCrossBraces(a: number, b: number) {
-        // 4 faces: 0-1, 1-2, 2-3, 3-0
-        for (let i = 0; i < 4; i++) {
-          const j = (i + 1) % 4;
-          E.push([a + i, b + j, 0.1, 0.5, 0, 229, 255]);
-          E.push([a + j, b + i, 0.1, 0.5, 0, 229, 255]);
+      // Dense cross-braces — multiple X patterns per face per tier
+      function addDenseCrossBraces(aY: number, bY: number, aHW: number, bHW: number, segments: number) {
+        for (let s = 0; s < segments; s++) {
+          const t0 = s / segments;
+          const t1 = (s + 1) / segments;
+          const y0 = aY + (bY - aY) * t0;
+          const y1 = aY + (bY - aY) * t1;
+          const hw0 = lerpHW(aHW, bHW, t0);
+          const hw1 = lerpHW(aHW, bHW, t1);
+          // Add sub-platform at each division
+          const sub0 = s === 0 ? -1 : addPlatform(y0 * S, hw0 * S, 0.12, 0.4);
+          const sub1 = addPlatform(y1 * S, hw1 * S, 0.12, 0.4);
+          // If first segment, use the actual tier platform vertices
+          const corners0: number[][] = [];
+          const corners1: number[][] = [];
+          for (let c = 0; c < 4; c++) {
+            corners0.push(s === 0 ? [] : []);  // we'll use indices directly
+            corners1.push([]);
+          }
+          // Cross braces on each face of each sub-segment
+          if (s === 0) continue; // first sub-platform overlaps with tier platform
+          const prev = sub0;
+          const curr = sub1;
+          for (let i = 0; i < 4; i++) {
+            const j = (i + 1) % 4;
+            E.push([prev + i, curr + j, 0.08, 0.4, 0, 229, 255]);
+            E.push([prev + j, curr + i, 0.08, 0.4, 0, 229, 255]);
+            // Vertical connectors between sub-platforms
+            E.push([prev + i, curr + i, 0.15, 0.5, 0, 229, 255]);
+          }
         }
       }
-      addCrossBraces(p0, p1);
-      addCrossBraces(p1, p2);
-      addCrossBraces(p2, p3);
 
-      // Mid-tier horizontal rings (extra detail)
-      addPlatform(-110 * S, 62 * S);
-      addPlatform(-32 * S, 46 * S);
-      addPlatform(35 * S, 31 * S);
+      // Dense lattice for each tier section (3 sub-segments each)
+      addDenseCrossBraces(-150, -70, 70, 54, 3);
+      addDenseCrossBraces(-70, 5, 54, 38, 3);
+      addDenseCrossBraces(5, 65, 38, 24, 2);
 
-      // Antenna mast
+      // Original cross-braces on main tiers (keep for structure)
+      function addCrossBraces(a: number, b: number, opacity = 0.12) {
+        for (let i = 0; i < 4; i++) {
+          const j = (i + 1) % 4;
+          E.push([a + i, b + j, opacity, 0.5, 0, 229, 255]);
+          E.push([a + j, b + i, opacity, 0.5, 0, 229, 255]);
+        }
+      }
+      addCrossBraces(p0, p1, 0.15);
+      addCrossBraces(p1, p2, 0.15);
+      addCrossBraces(p2, p3, 0.15);
+      addCrossBraces(p3, p4, 0.12);
+
+      // Mid-tier horizontal rings
+      addPlatform(-110 * S, 62 * S, 0.2, 0.6);
+      addPlatform(-32 * S, 46 * S, 0.2, 0.6);
+      addPlatform(35 * S, 31 * S, 0.2, 0.6);
+
+      // Internal diagonal bracing (inside the tower for lattice density)
+      function addInternalDiagonals(y0: number, y1: number, hw0: number, hw1: number) {
+        // Diagonal from corner to opposite corner through the center
+        const b = V.length;
+        V.push([-hw0 * S, y0 * S, -hw0 * S], [hw1 * S, y1 * S, hw1 * S]);
+        V.push([hw0 * S, y0 * S, -hw0 * S], [-hw1 * S, y1 * S, hw1 * S]);
+        E.push([b, b + 1, 0.06, 0.3, 0, 229, 255]);
+        E.push([b + 2, b + 3, 0.06, 0.3, 0, 229, 255]);
+      }
+      addInternalDiagonals(-150, -70, 70, 54);
+      addInternalDiagonals(-70, 5, 54, 38);
+
+      // === SATELLITE DISH (circle approximation on one side) ===
+      const dishY = -20 * S;
+      const dishX = 42 * S;
+      const dishZ = 0;
+      const dishR = 18 * S;
+      const dishSegments = 8;
+      const dishCenter = V.length;
+      V.push([dishX, dishY, dishZ]);
+      const dishStart = V.length;
+      for (let i = 0; i < dishSegments; i++) {
+        const angle = (i / dishSegments) * Math.PI * 2;
+        V.push([dishX + 4 * S, dishY + Math.cos(angle) * dishR, dishZ + Math.sin(angle) * dishR]);
+      }
+      // Connect dish rim
+      for (let i = 0; i < dishSegments; i++) {
+        E.push([dishStart + i, dishStart + (i + 1) % dishSegments, 0.25, 0.7, 0, 229, 255]);
+        // Spokes from center
+        E.push([dishCenter, dishStart + i, 0.1, 0.4, 0, 229, 255]);
+      }
+      // Dish arm connecting to tower
+      const dishArm = V.length;
+      V.push([38 * S * 0.7, dishY, dishZ]);
+      E.push([dishArm, dishCenter, 0.3, 0.8, 0, 229, 255]);
+      // Support strut
+      const dishStrut = V.length;
+      V.push([38 * S * 0.7, dishY + 15 * S, dishZ]);
+      E.push([dishStrut, dishCenter, 0.15, 0.5, 0, 229, 255]);
+
+      // === ANTENNA MAST (taller, with more detail) ===
       const mast0 = V.length; V.push([0, 100 * S, 0]);
-      const mast1 = V.length; V.push([0, 150 * S, 0]);
-      E.push([mast0, mast1, 0.6, 1.5, 0, 229, 255]);
+      const mastMid = V.length; V.push([0, 120 * S, 0]);
+      const mast1 = V.length; V.push([0, 155 * S, 0]);
+      E.push([mast0, mastMid, 0.6, 1.5, 0, 229, 255]);
+      E.push([mastMid, mast1, 0.5, 1.2, 0, 229, 255]);
 
-      // Antenna arms
-      const a1l = V.length; V.push([-18 * S, 115 * S, 0]);
-      const a1r = V.length; V.push([18 * S, 115 * S, 0]);
-      const a1f = V.length; V.push([0, 115 * S, -18 * S]);
-      const a1b = V.length; V.push([0, 115 * S, 18 * S]);
-      E.push([a1l, a1r, 0.4, 0.8, 0, 229, 255]);
-      E.push([a1f, a1b, 0.4, 0.8, 0, 229, 255]);
+      // Mast guy-wires from antenna base corners to mast
+      for (let i = 0; i < 4; i++) {
+        E.push([p4 + i, mast0, 0.15, 0.5, 0, 229, 255]);
+      }
 
-      const a2l = V.length; V.push([-12 * S, 130 * S, 0]);
-      const a2r = V.length; V.push([12 * S, 130 * S, 0]);
-      const a2f = V.length; V.push([0, 130 * S, -12 * S]);
-      const a2b = V.length; V.push([0, 130 * S, 12 * S]);
-      E.push([a2l, a2r, 0.3, 0.6, 0, 229, 255]);
-      E.push([a2f, a2b, 0.3, 0.6, 0, 229, 255]);
+      // === TOP ANTENNA ARRAYS (multiple rod elements) ===
+      // Cross arms at multiple heights
+      function addAntennaArms(y: number, spread: number, opacity: number, width: number) {
+        const b = V.length;
+        V.push([-spread * S, y * S, 0], [spread * S, y * S, 0]);
+        V.push([0, y * S, -spread * S], [0, y * S, spread * S]);
+        E.push([b, b + 1, opacity, width, 0, 229, 255]);
+        E.push([b + 2, b + 3, opacity, width, 0, 229, 255]);
+        return b;
+      }
 
-      // Coral accent struts (antenna supports)
-      E.push([p4, mast0, 0.15, 0.5, 255, 107, 107]);
-      E.push([p4 + 2, mast0, 0.15, 0.5, 255, 107, 107]);
+      addAntennaArms(108, 16, 0.4, 0.8);
+      addAntennaArms(120, 14, 0.35, 0.7);
+      addAntennaArms(135, 10, 0.3, 0.6);
+      addAntennaArms(148, 7, 0.25, 0.5);
+
+      // Vertical whip antennas at arm tips (top level)
+      function addWhipAntenna(x: number, y: number, z: number, h: number) {
+        const b = V.length;
+        V.push([x * S, y * S, z * S], [x * S, (y + h) * S, z * S]);
+        E.push([b, b + 1, 0.35, 0.5, 0, 229, 255]);
+      }
+      addWhipAntenna(16, 108, 0, 14);
+      addWhipAntenna(-16, 108, 0, 14);
+      addWhipAntenna(0, 108, 16, 12);
+      addWhipAntenna(0, 108, -16, 12);
+
+      // === CABLE RUNS (thin lines along the tower) ===
+      function addCableRun(points: number[][]) {
+        for (let i = 0; i < points.length - 1; i++) {
+          const a = V.length; V.push(points[i].map(v => v * S));
+          const b = V.length; V.push(points[i + 1].map(v => v * S));
+          E.push([a, b, 0.06, 0.3, 0, 229, 255]);
+        }
+      }
+      // Cable from base to antenna
+      addCableRun([[68, -150, 68], [52, -70, 52], [36, 5, 36], [22, 65, 22], [8, 100, 8], [0, 120, 0]]);
+      addCableRun([[-68, -150, -68], [-52, -70, -52], [-36, 5, -36], [-22, 65, -22], [-8, 100, -8], [0, 120, 0]]);
 
       // 3D math
       const DEG = Math.PI / 180;

@@ -144,17 +144,29 @@ const authorDescriptionDataAttributes = effectiveAuthorDescProp
           }
 
           > :global(.author-image) {
-            aspect-ratio: var(--ratio-square);
-            height: 80px;
-            width: 80px;
+            height: 44px;
+            width: 44px;
+            flex-shrink: 0;
+            margin-top: 0;
+
+            :global(.image-inner) {
+              height: 44px;
+              width: 44px;
+            }
 
             :global(picture) {
               border-radius: var(--radius-full);
               overflow: hidden;
+              display: block;
+              height: 44px;
+              width: 44px;
             }
 
             :global(img) {
               height: 100%;
+              width: 100%;
+              object-fit: cover;
+              display: block;
             }
           }
         }

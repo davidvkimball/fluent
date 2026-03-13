@@ -142,6 +142,7 @@ pageSections:
       update it without filing a ticket.
     authorName: Maria Okafor
     authorDescription: Head of Growth, Basecamp Labs
+    authorImage: /src/assets/images/component-docs/reviewer-maria.jpg
     colorScheme: dark
     backgroundColor: surface
     paddingVertical: 4xl
